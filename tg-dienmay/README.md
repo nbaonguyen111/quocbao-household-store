@@ -39,26 +39,57 @@
 
 ---
 
-## 📦 Cài đặt và chạy project
+# 📦 Hướng Dẫn Cài Đặt và Chạy Project
 
-### 1. Clone dự án
+## 1️⃣ Clone Dự Án
+
+```bash
 git clone https://github.com/<your-username>/<repo-name>.git
 cd <repo-name>
-### 2.Cài đặt gói phụ thuộc
+```
+
+## 2️⃣ Cài Đặt Gói Phụ Thuộc
+
+Sử dụng **npm**:
+
+```bash
 npm install
-# hoặc nếu dùng yarn:
-# yarn install
-### 3. Chạy server
-npm run dev 
-#######Lưu Ý#####
-Mỗi thành viên khi làm việc cần:
-Tạo branch riêng:
-git checkout -b tên-chức-năng
-Sau khi code xong một chức năng mới muốn push lên branch thì dùng "git add ."
-sau đó Commit Rõ Ràng:
-"git commit -m nội-dung-chức-năng"
-sau khi commit xong dùng 
-"git push origin" để push lên branch
+```
+
+Hoặc sử dụng **yarn**:
+
+```bash
+yarn install
+```
+
+## 3️⃣ Chạy Dự Án
+
+```bash
+npm run dev
+```
+
+---
+
+## ⚠️ Lưu Ý Khi Làm Việc Nhóm
+
+🔧 **Tạo branch riêng để phát triển chức năng:**
+
+```bash
+git checkout -b ten-chuc-nang
+```
+
+💾 **Sau khi code xong, thực hiện các bước sau:**
+
+```bash
+git add .
+git commit -m "Mô tả ngắn gọn và rõ ràng chức năng"
+git push origin ten-chuc-nang
+```
+
+📌 **Lưu ý:**
+- Tên commit rõ ràng, dễ hiểu cho các thành viên khác.
+- Tạo Pull Request sau khi hoàn thành chức năng để merge vào nhánh chính.
+
 
 ---
 
