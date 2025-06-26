@@ -1,10 +1,12 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
-import { db } from "../firebase";
-import { collection, getDocs, query, limit } from "firebase/firestore";
+import { db } from "@/firebase/firebase";
+import { collection, getDocs, query, limit,where } from "firebase/firestore";
+import { createFetch } from "next/dist/client/components/router-reducer/fetch-server-response";
 
 export default function TrangChu() {
-  const [products, setProducts] = useState([]);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const smallBanners = [
     "/images/bannernho1.png",
     "/images/bannernho2.png",
@@ -33,17 +35,50 @@ export default function TrangChu() {
   }, [nextSlide]);
 
 
-  useEffect(() => {
-    async function fetchProducts() {
-      const q = query(collection(db, "sanphamnoibat"), limit(4));
-      const querySnapshot = await getDocs(q);
-      const data = [];
-      querySnapshot.forEach((doc) => {
-        data.push({ id: doc.id, ...doc.data() });
-      });
-      setProducts(data);
+  const fetchFeaturedProducts = async () => {
+    try {
+      const snapshot = await getDocs(query(collection(db, "products"), where("featured", "==", true), limit(4)));
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      const productsWithRating = await Promise.all(
+        data.map(async (product) => {
+          const reviewsSnapshot = await getDocs(
+            query(collection(db, "reviews"), where("productId", "==", product.id))
+          );
+
+          const ratings = reviewsSnapshot.docs.map(doc => doc.data().rating);
+          const avgRating =
+            ratings.length > 0
+              ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
+              : "Chưa có";
+
+          return {
+            ...product,
+            rating: avgRating,
+          };
+        })
+      );
+
+      setFeaturedProducts(productsWithRating);
+    } catch (error) {
+      console.log("Lỗi khi lấy sản phẩm nổi bật", error);
     }
-    fetchProducts();
+  };
+    const getAllProducts = async()=>{
+      try{
+        const snapshot = await getDocs(collection(db,"products"));
+        const data = snapshot.docs.map(doc =>({ id:doc.id,...doc.data()}));
+        setAllProducts(data);
+      }catch(error){
+        console.log("Lỗi khi lấy sản phẩm",error);
+      }
+    };
+     
+     
+  
+  useEffect(() => {
+   getAllProducts();
+    fetchFeaturedProducts();
   }, []);
 
   return (
@@ -95,12 +130,12 @@ export default function TrangChu() {
       <section className="san-pham-noi-bat">
         <h2>Sản phẩm nổi bật</h2>
         <div className="flex flex-wrap gap-4 justify-center">
-          {products.length === 0 ? (
+          {featuredProducts.length === 0 ? (
             <div>Đang tải...</div>
           ) : (
-            products.map((sp) => (
+            featuredProducts.map((sp) => (
               <div key={sp.id} className="bg-white rounded-lg shadow p-3 w-60 flex flex-col items-center">
-                <img src={sp.img} alt={sp.name} className="w-full h-28 object-contain mb-2" />
+                <img src={sp.imageUrl} alt={sp.name} className="w-full h-28 object-contain mb-2" />
                 <div className="font-semibold mb-1">{sp.name}</div>
                 <div className="text-red-600 text-lg font-bold mb-1">
                   {sp.price?.toLocaleString()}₫
@@ -132,8 +167,27 @@ export default function TrangChu() {
           })}
         </div>
       </div>
-      <section className="danh-sach-san-pham">
-        <h2>Danh Sách Sản Phẩm</h2>
+      <section className="all-products">
+        <h2>Tất Cả Sản Phẩm</h2>
+        <div className="flex flex-wrap gap-4 justify-center">
+          {allProducts.length === 0 ? (
+            <div>Đang tải...</div>
+          ) : (
+            allProducts.map((sp) => (
+              <div key={sp.id} className="bg-white rounded-lg shadow p-3 w-60 flex flex-col items-center">
+                <img src={sp.imageUrl} alt={sp.name} className="w-full h-28 object-contain mb-2" />
+                <div className="font-semibold mb-1">{sp.name}</div>
+                <div className="text-red-600 text-lg font-bold mb-1">
+                  {sp.price?.toLocaleString()}₫
+                </div>
+                {/* <div className="flex items-center text-yellow-500 text-sm">
+                  <span>★</span>
+                  <span className="ml-1">{sp.rating}</span>
+                </div> */}
+              </div>
+            ))
+          )}
+        </div>
       </section>
     </div>
   );
