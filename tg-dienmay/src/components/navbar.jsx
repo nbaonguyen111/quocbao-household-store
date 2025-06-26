@@ -1,12 +1,50 @@
 'use client';
-import { useEffect } from 'react';
+import { useState, useEffect } from "react";
 import 'flowbite';
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth, db } from "@/firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+
 
 export default function Navbar() {
+  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const handleLogout = async () => {
+    setLoading(true);
+    await signOut(auth);
+    setLoading(false);
+    router.push("/");
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+
+        // Lấy thêm info từ Firestore nếu cần
+        const docRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserData(docSnap.data());
+        }
+      } else {
+        setUser(null);
+        setUserData(null);
+      }
+
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   useEffect(() => { }, []);
 
   return (
     <div>
+
       {/* Banner phía trên */}
       <img
         src="/images/banner1.png"
@@ -47,13 +85,44 @@ export default function Navbar() {
           </form>
 
           {/* Đăng nhập */}
-          <a href="#" className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-700 transition">
-            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            Đăng nhập
-          </a>
+
+
+          {!user ? (
+  <a href="/dang-nhap" className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-700 transition">
+    <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+    Đăng nhập
+  </a>
+) : (
+  <div className="relative group">
+    <button className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-700 transition">
+      👋 {userData?.name || user.email}
+      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+
+    {/* Dropdown menu */}
+    <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg hidden group-hover:block z-50">
+      <a href="/thong-tin-tai-khoan" className="block px-4 py-2 hover:bg-gray-100">
+        Thông tin tài khoản
+      </a>
+      <a href="/lich-su-don-hang" className="block px-4 py-2 hover:bg-gray-100">
+        Lịch sử đơn hàng
+      </a>
+      <button
+        onClick={handleLogout}
+        disabled={loading}
+        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
+      >
+        {loading ? "Đang đăng xuất..." : "Đăng xuất"}
+      </button>
+    </div>
+  </div>
+)}
+
 
           {/* Giỏ hàng */}
           <a href="#" className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-700 transition relative">
