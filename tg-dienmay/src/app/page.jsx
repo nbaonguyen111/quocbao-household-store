@@ -175,15 +175,15 @@ export default function TrangChu() {
           ) : (
             allProducts.map((sp) => (
               <div key={sp.id} className="bg-white rounded-lg shadow p-3 w-60 flex flex-col items-center">
-                <img src={sp.imageUrl} alt={sp.name} className="w-full h-28 object-contain mb-2" />
+                <img src={`images/${sp.imageUrl}`} alt={sp.name} className="w-full h-28 object-contain mb-2" />
                 <div className="font-semibold mb-1">{sp.name}</div>
                 <div className="text-red-600 text-lg font-bold mb-1">
                   {sp.price?.toLocaleString()}₫
                 </div>
-                {/* <div className="flex items-center text-yellow-500 text-sm">
+                 {/* <div className="flex items-center text-yellow-500 text-sm">
                   <span>★</span>
                   <span className="ml-1">{sp.rating}</span>
-                </div> */}
+                </div>  */}
               </div>
             ))
           )}
