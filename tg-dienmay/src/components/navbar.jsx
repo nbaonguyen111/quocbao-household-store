@@ -1,7 +1,5 @@
 'use client';
 import { useState, useEffect } from "react";
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import 'flowbite';
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "@/firebase/firebase";
@@ -51,7 +49,6 @@ export default function Navbar() {
   }, []);
   const [showDropdown, setShowDropdown] = useState(false);
   const [search, setSearch] = useState("");
-  const router = useRouter();
 
   useEffect(() => { }, []);
 
