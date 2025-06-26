@@ -1,8 +1,18 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'flowbite';
 
+const categories = [
+  { id: 'ac', name: 'Máy Lạnh', icon: '/images/maylanh.png' },
+  { id: 'tv', name: 'Tivi', icon: '/images/tivi.png' },
+  { id: 'fridge', name: 'Tủ Lạnh', icon: '/images/tulanh.png' },
+  { id: 'washer', name: 'Máy Giặt', icon: '/images/maygiat.png' },
+  { id: 'microwave', name: 'Máy quạt', icon: '/images/mayquat.png' }
+];
+
 export default function Navbar() {
+  const [showDropdown, setShowDropdown] = useState(false);
+
   useEffect(() => { }, []);
 
   return (
@@ -16,18 +26,45 @@ export default function Navbar() {
 
       {/* Navbar chính */}
       <nav className="bg-[#2196f3] w-full">
-        <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-2">
+        <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-2 relative">
           {/* Logo */}
           <a href="/" className="flex items-center space-x-2">
             <img src="/images/logo1.png" alt="Logo" className="h-32 w-32" />
           </a>
           {/* Danh mục */}
-          <button className="flex items-center text-white font-medium px-3 py-2 rounded hover:bg-blue-700 transition">
-            <svg className="w-6 h-6 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            Danh mục
-          </button>
+          <div className="relative">
+            <button
+              className="flex items-center text-white font-medium px-3 py-2 rounded hover:bg-blue-700 transition"
+              onClick={() => setShowDropdown((v) => !v)}
+              onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+            >
+              <svg className="w-6 h-6 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              Danh mục
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {showDropdown && (
+              <div className="absolute left-0 mt-2 w-56 bg-white rounded shadow-lg z-20 animate-fade-in">
+                <ul className="divide-y divide-gray-100">
+                  {categories.map((cat) => (
+                    <li key={cat.id}>
+                      <a
+                        href={`/san-pham?category=${cat.id}`}
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 transition text-gray-800"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        <img src={cat.icon} alt={cat.name} className="w-8 h-8 object-contain" />
+                        <span className="font-medium">{cat.name}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
 
           {/* Thanh tìm kiếm */}
           <form className="flex-1 mx-4 max-w-xl">
