@@ -1,12 +1,16 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
 import { db } from "@/firebase/firebase";
-import { collection, getDocs, query, limit,where } from "firebase/firestore";
+import { collection, getDocs, query, limit, where } from "firebase/firestore";
 import { createFetch } from "next/dist/client/components/router-reducer/fetch-server-response";
+import { useRouter } from "next/navigation";
+
+
 
 export default function TrangChu() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
+  const router = useRouter();
   const smallBanners = [
     "/images/bannernho1.png",
     "/images/bannernho2.png",
@@ -64,20 +68,20 @@ export default function TrangChu() {
       console.log("Lỗi khi lấy sản phẩm nổi bật", error);
     }
   };
-    const getAllProducts = async()=>{
-      try{
-        const snapshot = await getDocs(collection(db,"products"));
-        const data = snapshot.docs.map(doc =>({ id:doc.id,...doc.data()}));
-        setAllProducts(data);
-      }catch(error){
-        console.log("Lỗi khi lấy sản phẩm",error);
-      }
-    };
-     
-     
-  
+  const getAllProducts = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "products"));
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setAllProducts(data);
+    } catch (error) {
+      console.log("Lỗi khi lấy sản phẩm", error);
+    }
+  };
+
+
+
   useEffect(() => {
-   getAllProducts();
+    getAllProducts();
     fetchFeaturedProducts();
   }, []);
 
@@ -134,7 +138,11 @@ export default function TrangChu() {
             <div>Đang tải...</div>
           ) : (
             featuredProducts.map((sp) => (
-              <div key={sp.id} className="bg-white rounded-lg shadow p-3 w-60 flex flex-col items-center">
+              <div
+                key={sp.id}
+                className="bg-white rounded-lg shadow p-3 w-60 flex flex-col items-center cursor-pointer hover:shadow-lg transition"
+                onClick={() => router.push(`/product/${sp.id}`)}
+              >
                 <img src={sp.imageUrl} alt={sp.name} className="w-full h-28 object-contain mb-2" />
                 <div className="font-semibold mb-1">{sp.name}</div>
                 <div className="text-red-600 text-lg font-bold mb-1">
@@ -149,6 +157,7 @@ export default function TrangChu() {
           )}
         </div>
       </section>
+      <br />
       {/* Banner nhỏ chuyển động */}
       {/* ----------------- BANNER NHỎ ĐẸP & CÂN ĐỐI ----------------- */}
       <div className="relative w-full max-w-6xl mx-auto mb-6 px-4">
@@ -167,6 +176,7 @@ export default function TrangChu() {
           })}
         </div>
       </div>
+      <br />
       <section className="all-products">
         <h2>Tất Cả Sản Phẩm</h2>
         <div className="flex flex-wrap gap-4 justify-center">
@@ -174,7 +184,11 @@ export default function TrangChu() {
             <div>Đang tải...</div>
           ) : (
             allProducts.map((sp) => (
-              <div key={sp.id} className="bg-white rounded-lg shadow p-3 w-60 flex flex-col items-center">
+              <div
+                key={sp.id}
+                className="bg-white rounded-lg shadow p-3 w-60 flex flex-col items-center cursor-pointer hover:shadow-lg transition"
+                onClick={() => router.push(`/product/${sp.id}`)}
+              >
                 <img src={sp.imageUrl} alt={sp.name} className="w-full h-28 object-contain mb-2" />
                 <div className="font-semibold mb-1">{sp.name}</div>
                 <div className="text-red-600 text-lg font-bold mb-1">
