@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/firebase/firebase";
+import Navbar from '../../components/navbar'
+import Footer from '../../components/footer'
 import { getDoc, doc } from "firebase/firestore";
 import {useRouter} from "next/navigation";
 export default function Login() {
@@ -41,7 +43,10 @@ export default function Login() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 border rounded mt-8">
+    <div>
+      <Navbar />
+      <main>
+        <div className="max-w-md mx-auto p-4 border rounded mt-8"> 
       <h1 className="text-2xl font-bold mb-4 text-center">Đăng nhập</h1>
       <form onSubmit={handleLogin} className="space-y-4">
         <input
@@ -72,6 +77,9 @@ export default function Login() {
       {userRole && (
         <p className="text-green-600 mt-2">Bạn đang đăng nhập với vai trò: <strong>{userRole}</strong></p>
       )}
+      </div>
+    </main>
+    <Footer />
     </div>
   );
 }

@@ -48,6 +48,7 @@ export default function Navbar() {
     return () => unsubscribe();
   }, []);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showDropdownAc, setShowDropdownAc] = useState(false);
   const [search, setSearch] = useState("");
 
   useEffect(() => { }, []);
@@ -61,7 +62,7 @@ export default function Navbar() {
 
   return (
     <div>
-
+      
       {/* Banner phía trên */}
       <img
         src="/images/banner1.png"
@@ -137,7 +138,7 @@ export default function Navbar() {
 
           {/* Đăng nhập */}
 
-
+            
           {!user ? (
   <a href="/dang-nhap" className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-700 transition">
     <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -147,7 +148,11 @@ export default function Navbar() {
     Đăng nhập
   </a>
 ) : (
-  <div className="relative group">
+  <div
+  className="relative"
+  onMouseEnter={() => setShowDropdownAc(true)}
+  onMouseLeave={() => setShowDropdownAc(false)}
+>
     <button className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-700 transition">
       👋 {userData?.name || user.email}
       <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -155,8 +160,8 @@ export default function Navbar() {
       </svg>
     </button>
 
-    {/* Dropdown menu */}
-    <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg hidden group-hover:block z-50">
+    {showDropdownAc && (
+    <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg z-50">
       <a href="/thong-tin-tai-khoan" className="block px-4 py-2 hover:bg-gray-100">
         Thông tin tài khoản
       </a>
@@ -171,7 +176,8 @@ export default function Navbar() {
         {loading ? "Đang đăng xuất..." : "Đăng xuất"}
       </button>
     </div>
-  </div>
+  )}
+</div>
 )}
 
 

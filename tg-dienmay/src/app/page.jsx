@@ -1,7 +1,9 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
 import { db } from "@/firebase/firebase";
-import { collection, getDocs, query, limit, where } from "firebase/firestore";
+import Navbar from '../components/navbar'
+import Footer from '../components/footer'
+import { collection, getDocs, query, limit,where } from "firebase/firestore";
 import { createFetch } from "next/dist/client/components/router-reducer/fetch-server-response";
 import { useRouter } from "next/navigation";
 import { addToCart } from "./gio-hang/addtocart";
@@ -110,6 +112,8 @@ const handleAddToCart = async (product) => {
 
   return (
     <div>
+      <Navbar/>
+      <main>
       <section className="banner w-full mb-4 flex justify-center">
         <img
           src="/images/bannerlonpng.png"
@@ -217,6 +221,8 @@ const handleAddToCart = async (product) => {
           )}
         </div>
       </section>
+      </main>
+      <Footer/>
     </div>
   );
 }

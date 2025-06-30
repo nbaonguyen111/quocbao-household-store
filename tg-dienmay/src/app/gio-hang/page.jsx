@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { db } from "@/firebase/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import Navbar from '../../components/navbar'
+import Footer from '../../components/footer'
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation"; // Nếu muốn redirect về trang login
 
@@ -61,6 +63,9 @@ export default function Giohang() {
   if (!userId) return <div className="p-8 text-center text-gray-500">Đang kiểm tra đăng nhập...</div>;
 
   return (
+    <div>
+      <Navbar />
+      <main>
     <div className="p-8 space-y-6">
       <div className="text-center">
         <h1 className="text-2xl font-bold">Giỏ hàng</h1>
@@ -118,6 +123,7 @@ export default function Giohang() {
           <button className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded">
             Thanh toán
           </button>
+          <span className="font-bold text-lg text-green-700">Tổng tiền:{` ${cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toLocaleString()}₫`}</span>
           <button
             className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded"
             onClick={handleDeleteAll}
@@ -126,6 +132,9 @@ export default function Giohang() {
           </button>
         </div>
       )}
+    </div>
+  </main>
+  <Footer />
     </div>
   );
 }

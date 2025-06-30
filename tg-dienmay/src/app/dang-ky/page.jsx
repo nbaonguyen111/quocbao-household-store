@@ -4,6 +4,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
 import {db} from "@/firebase/firebase";
+import Navbar from '../../components/navbar'
+import Footer from '../../components/footer'
 import { useRouter } from "next/navigation";
 export default function DangKy() {
     const [name, setName] = useState("");
@@ -30,7 +32,7 @@ export default function DangKy() {
                 role:"user"
               });
             setSuccess("Đăng ký thành công");
-            router.push("/dang-nhap");
+            router.push("/");
 
         } catch (err) {
             setError(err.message);
@@ -38,6 +40,8 @@ export default function DangKy() {
     };
     return (
         <div>
+            <Navbar />
+            <main>
             <div className="container mx-auto md:w-1/2 border border-black p-4 mt-4">
                 <h1 className="text-3xl text-red-500 font-bold text-center mb-4">Đăng ký</h1>
 
@@ -76,6 +80,8 @@ export default function DangKy() {
                 {error && <p className="text-red-500 mt-2">{error}</p>}
                 {success && <p className="text-green-500 mt-2">{success}</p>}
             </div>
+            </main>
+            <Footer />
 
         </div>
     );
