@@ -4,12 +4,16 @@ import { db } from "@/firebase/firebase";
 import { collection, getDocs, query, limit, where } from "firebase/firestore";
 import { createFetch } from "next/dist/client/components/router-reducer/fetch-server-response";
 import { useRouter } from "next/navigation";
+import { addToCart } from "./gio-hang/addtocart";
+import toast from "react-hot-toast";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
 
 export default function TrangChu() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
+  const [userId,setUserId] = useState(null);
   const router = useRouter();
   const smallBanners = [
     "/images/bannernho1.png",
@@ -37,8 +41,27 @@ export default function TrangChu() {
     const timer = setInterval(nextSlide, 3000);
     return () => clearInterval(timer);
   }, [nextSlide]);
+useEffect(() => {
+  const auth = getAuth();
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setUserId(user.uid);
+    } else {
+      setUserId(null); // hoặc điều hướng sang /login nếu cần
+    }
+  });
 
+  return () => unsubscribe();
+})
+const handleAddToCart = async (product) => {
+  if (!userId) {
+    toast.error("Bạn cần đăng nhập để thêm giỏ hàng");
+    return;
+  }
 
+  await addToCart(userId, product);
+  toast.success("Đã thêm vào giỏ hàng!");
+};
   const fetchFeaturedProducts = async () => {
     try {
       const snapshot = await getDocs(query(collection(db, "products"), where("featured", "==", true), limit(4)));
@@ -186,10 +209,9 @@ export default function TrangChu() {
                 <div className="text-red-600 text-lg font-bold mb-1">
                   {sp.price?.toLocaleString()}₫
                 </div>
-                 {/* <div className="flex items-center text-yellow-500 text-sm">
-                  <span>★</span>
-                  <span className="ml-1">{sp.rating}</span>
-                </div>  */}
+                 <div className="flex items-center text-yellow-500 text-sm">
+                  <button onClick={() => handleAddToCart(sp)} className="bg-blue-500 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded">Thêm vào giỏ hàng</button>
+                </div> 
               </div>
             ))
           )}

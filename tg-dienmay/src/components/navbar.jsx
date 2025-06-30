@@ -176,7 +176,7 @@ export default function Navbar() {
 
 
           {/* Giỏ hàng */}
-          <a href="#" className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-800 transition relative font-semibold">
+          <a href="/gio-hang" className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-800 transition relative font-semibold">
             <svg className="w-5 h-5 mr-1 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <circle cx="9" cy="21" r="1" />
               <circle cx="20" cy="21" r="1" />
