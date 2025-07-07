@@ -10,7 +10,7 @@ const Sidebar = () => {
     router.push("/dang-nhap");
   };
   return (
-    <div className="h-screen w-64 bg-gray-800 text-white flex flex-col">
+    <div className="h-screen w-64 bg-gray-800 fixed flex flex-col">
       <div className="text-2xl font-bold p-4 border-b border-gray-700">Admin Panel</div>
       <nav className="flex-1 p-4">
         <ul className="space-y-4">

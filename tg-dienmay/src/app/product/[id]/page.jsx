@@ -36,7 +36,7 @@ export default function ProductDetail() {
   if (!product) return <div>Đang tải...</div>;
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen flex flex-col items-center">
+    <div className="p-8 text-black bg-gray-100 min-h-screen flex flex-col items-center">
       <h2 className="text-2xl font-bold mb-4">{product.name}</h2>
       <div className="flex gap-8 items-start mb-8">
         <div>

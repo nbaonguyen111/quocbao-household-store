@@ -89,7 +89,7 @@ export default function ProductAdminPage() {
 
 
     return (
-        <div className="bg-white p-6 rounded shadow w-full h-full text-black"   >
+        <div className="p-6">
             <h2 className="text-2xl font-bold mb-4">Product List</h2>
             {/* Hiển thị thông báo */}
             {message && (

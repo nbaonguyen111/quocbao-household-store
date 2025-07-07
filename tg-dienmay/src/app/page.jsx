@@ -122,8 +122,8 @@ const handleAddToCart = async (product) => {
         />
       </section>
 
-      <section className="danh-muc bg-white py-4 rounded-lg shadow mb-6">
-        <div className="flex justify-around items-end">
+      <section className="danh-muc bg-gray-500 py-4 rounded-lg shadow mb-6">
+        <div className="flex justify-around items-end text-yellow-500 font-bold">
           {/* Máy lạnh */}
           <button className="flex flex-col items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition cursor-pointer border border-transparent hover:border-blue-400 focus:outline-none">
             <div className="relative">
@@ -159,13 +159,14 @@ const handleAddToCart = async (product) => {
       </section>
 
       <section className="san-pham-noi-bat">
-        <h2>Sản phẩm nổi bật</h2>
+        <h2 className="text-2xl text-yellow-500 font-bold mb-4 text-center">Sản phẩm nổi bật</h2>
         <div className="flex flex-wrap gap-4 justify-center">
           {featuredProducts.length === 0 ? (
             <div>Đang tải...</div>
           ) : (
             featuredProducts.map((sp) => (
-              <div key={sp.id} className="bg-white rounded-lg shadow p-3 w-60 flex flex-col items-center">
+              <div key={sp.id} className="bg-white text-yellow-500 rounded-lg shadow p-3 w-60 flex flex-col items-center">
+                <a href={`product/${sp.id}`}>
                 <img src={`images/${sp.imageUrl}`} alt={sp.name} className="w-full h-28 object-contain mb-2" />
                 <div className="font-semibold mb-1"><a href={`product/${sp.id}`}>{sp.name}</a></div>
                 <div className="text-red-600 text-lg font-bold mb-1">
@@ -175,6 +176,7 @@ const handleAddToCart = async (product) => {
                   <span>★</span>
                   <span className="ml-1">{sp.rating}</span>
                 </div>
+                </a>
               </div>
             ))
           )}
@@ -201,13 +203,15 @@ const handleAddToCart = async (product) => {
       </div>
       <br />
       <section className="all-products">
-        <h2>Tất Cả Sản Phẩm</h2>
+        <h2 className="text-2xl text-yellow-500 font-bold mb-4 text-center">Tất Cả Sản Phẩm</h2>
         <div className="flex flex-wrap gap-4 justify-center">
           {allProducts.length === 0 ? (
             <div>Đang tải...</div>
           ) : (
             allProducts.map((sp) => (
-              <div key={sp.id} className="bg-white rounded-lg shadow p-3 w-60 flex flex-col items-center">
+              
+              <div key={sp.id} className="bg-white text-yellow-500 rounded-lg shadow p-3 w-60 flex flex-col items-center">
+                <a href={`product/${sp.id}`}>
                 <img src={`images/${sp.imageUrl}`} alt={sp.name} className="w-full h-28 object-contain mb-2" />
                 <div className="font-semibold mb-1"><a href={`product/${sp.id}`}>{sp.name}</a></div>
                 <div className="text-red-600 text-lg font-bold mb-1">
@@ -216,6 +220,7 @@ const handleAddToCart = async (product) => {
                  <div className="flex items-center text-yellow-500 text-sm">
                   <button onClick={() => handleAddToCart(sp)} className="bg-blue-500 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded">Thêm vào giỏ hàng</button>
                 </div> 
+                </a>
               </div>
             ))
           )}
