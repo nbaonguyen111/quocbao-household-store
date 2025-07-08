@@ -2,12 +2,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { db } from "@/firebase/firebase";
-import Navbar from '../../components/navbar'
-import Footer from '../../components/footer'
+import Navbar from '../../../components/navbar'
+import Footer from '../../../components/footer'
 import { doc, getDoc } from "firebase/firestore";
-import { addToCart } from "@/app/gio-hang/addtocart"; // Đảm bảo đúng đường dẫn
+import { addToCart } from "@/app/gio-hang/addtocart";
 import { Toaster, toast } from 'react-hot-toast';
-
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -17,10 +17,27 @@ export default function ProductDetail() {
   const [address, setAddress] = useState("Phường Bình Chiểu, TP. Thủ Đức, Hồ Chí Minh");
   const [tempAddress, setTempAddress] = useState(address);
   const [deliveryTime, setDeliveryTime] = useState("");
-  const userId = "demoUser";
+  const [userId, setUserId] = useState(null);
+  const handleConfirmAddress = async () => {
+    setAddress(tempAddress);
+    setShowAddressModal(false);
+    if (userId) {
+      await setDoc(doc(db, "carts", userId), { address: tempAddress }, { merge: true });
+    }
+  };
+
+  // Lấy userId từ Firebase Auth
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) setUserId(user.uid);
+      else setUserId("demoUser"); // fallback nếu chưa đăng nhập
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleAddToCart = async () => {
-    if (!product) return;
+    if (!product || !userId) return;
     await addToCart(userId, { ...product, quantity });
     toast.success("Đã thêm vào giỏ hàng!");
   };
@@ -50,7 +67,7 @@ export default function ProductDetail() {
   return (
 
     <>
-    <Navbar />
+      <Navbar />
       <Toaster />
       <main>
         <div className="p-8 text-black bg-gray-100 min-h-screen flex flex-col items-center">
@@ -143,11 +160,10 @@ export default function ProductDetail() {
                     >Huỷ</button>
                     <button
                       className="px-3 py-1 rounded bg-blue-600 text-white"
-                      onClick={() => {
-                        setAddress(tempAddress);
-                        setShowAddressModal(false);
-                      }}
-                    >Xác nhận</button>
+                      onClick={handleConfirmAddress}
+                    >
+                      Xác nhận
+                    </button>
                   </div>
                 </div>
               </div>
