@@ -18,6 +18,13 @@ export default function ProductDetail() {
   const [tempAddress, setTempAddress] = useState(address);
   const [deliveryTime, setDeliveryTime] = useState("");
   const [userId, setUserId] = useState(null);
+  const handleConfirmAddress = async () => {
+    setAddress(tempAddress);
+    setShowAddressModal(false);
+    if (userId) {
+      await setDoc(doc(db, "carts", userId), { address: tempAddress }, { merge: true });
+    }
+  };
 
   // Lấy userId từ Firebase Auth
   useEffect(() => {
@@ -153,11 +160,10 @@ export default function ProductDetail() {
                     >Huỷ</button>
                     <button
                       className="px-3 py-1 rounded bg-blue-600 text-white"
-                      onClick={() => {
-                        setAddress(tempAddress);
-                        setShowAddressModal(false);
-                      }}
-                    >Xác nhận</button>
+                      onClick={handleConfirmAddress}
+                    >
+                      Xác nhận
+                    </button>
                   </div>
                 </div>
               </div>
