@@ -5,6 +5,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "@/firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 
 const categories = [
@@ -74,9 +75,9 @@ export default function Navbar() {
       <nav className="bg-[#2196f3] w-full">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-2 relative">
           {/* Logo */}
-          <a href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2">
             <img src="/images/logo1.png" alt="Logo" className="h-32 w-32" />
-          </a>
+          </Link>
           {/* Danh mục */}
           <div className="relative">
             <button
