@@ -1,8 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/firebase/firebase"; // Đảm bảo alias @ trỏ đúng src
+import { db } from "@/firebase/firebase";
+import Link from "next/link";
+import Footer from "@/components/footer";
 
 const sortOptions = [
   { value: "hot", label: "Nổi bật" },
@@ -12,9 +14,26 @@ const sortOptions = [
   { value: "price-desc", label: "Giá giảm dần" },
 ];
 
-const pageSize = 8; // Số sản phẩm mỗi trang
+const pageSize = 8;
+const smallBanners = [
+  "/images/bannernho1.png",
+  "/images/bannernho2.png",
+  "/images/bannernho3.png",
+  "/images/bannernho4.png",
+  "/images/bannernho5.png",
+  "/images/bannernho6.png",
+];
+
+function removeVietnameseTones(str) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+}
 
 export default function TimKiemPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const keyword = searchParams.get("keyword") || "";
   const [searchTerm, setSearchTerm] = useState(keyword);
@@ -25,6 +44,16 @@ export default function TimKiemPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [smallBannerIdx, setSmallBannerIdx] = useState(0);
+
+  // Tự động chuyển banner nhỏ mỗi 3s
+  const nextSlide = useCallback(() => {
+    setSmallBannerIdx((prev) => (prev + 2) % smallBanners.length);
+  }, []);
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 3000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
 
   // Đồng bộ searchTerm với keyword trên URL mỗi khi keyword thay đổi
   useEffect(() => {
@@ -106,13 +135,23 @@ export default function TimKiemPage() {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
-  function removeVietnameseTones(str) {
-    return str
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/đ/g, "d")
-      .replace(/Đ/g, "D");
-  }
+  // Xử lý tìm kiếm khi submit form
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Đẩy từ khóa lên URL để đồng bộ
+    router.push(`?keyword=${encodeURIComponent(searchTerm)}`);
+  };
+
+  // Danh mục như hình ảnh
+  const categories = [
+    { label: "Máy Lạnh", href: "/danh-muc/may-lanh", icon: "/images/maylanh.png" },
+    { label: "Tivi", href: "/danh-muc/tivi", icon: "/images/tivi.png" },
+    { label: "Tủ Lạnh", href: "/danh-muc/tu-lanh", icon: "/images/tulanh.png" },
+    { label: "Máy Giặt", href: "/danh-muc/may-giat", icon: "/images/maygiat.png" },
+    { label: "Lò Vi Sóng", href: "/danh-muc/lo-vi-song", icon: "/images/lovisong.png" },
+  ];
+
+  const [showMenu, setShowMenu] = useState(false);
 
   return (
     <div
@@ -123,6 +162,148 @@ export default function TimKiemPage() {
       }}
     >
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        {/* Banner nhỏ chuyển động */}
+        <div className="relative w-full max-w-6xl mx-auto mb-6 px-4">
+          <div className="grid grid-cols-2 gap-4">
+            {[0, 1].map((offset) => {
+              const idx = (smallBannerIdx + offset) % smallBanners.length;
+              return (
+                <img
+                  key={idx}
+                  src={smallBanners[idx]}
+                  alt={`Banner ${idx + 1}`}
+                  className="w-full h-[110px] object-cover rounded-lg shadow-md"
+                />
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Logo + Danh mục + Thanh tìm kiếm cùng hàng */}
+        <div
+          className="flex items-center gap-6 mb-8 px-2 w-full"
+          style={{
+            background: "#21a5f5", // Màu nền xanh nước biển
+            borderRadius: 16,
+            padding: "18px 18px",
+            marginBottom: 32,
+            boxShadow: "0 2px 12px #1976d211",
+          }}
+        >
+          {/* Logo về trang chủ */}
+          <Link
+            href="/"
+            className="flex items-center group shrink-0"
+            style={{ textDecoration: "none", minWidth: 120 }}
+          >
+            <img
+              src="/images/logo1.png"
+              alt="Thế Giới Điện Máy"
+              style={{
+                height: 150,         // Chiều cao logo vừa mắt (48-56px tuỳ ý)
+                width: "auto",
+                maxWidth: 160,      // Không quá dài
+                objectFit: "contain",
+                display: "block",
+                background: "transparent",
+                borderRadius: 8,
+              }}
+            />
+          </Link>
+
+          {/* Danh mục dropdown */}
+          <div className="relative ml-4 shrink-0">
+            <button
+              className="flex items-center px-4 py-2 rounded-lg font-bold text-lg shadow transition"
+              onClick={() => setShowMenu((v) => !v)}
+              style={{
+                minWidth: 140,
+                color: "#fff",
+                background: "#21a5f5",
+                transition: "all 0.2s",
+                cursor: "pointer",
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.background = "#1976d2";
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.background = "#21a5f5";
+              }}
+            >
+              <svg width="26" height="26" fill="none" viewBox="0 0 24 24" className="mr-2">
+                <rect x="3" y="6" width="18" height="2" rx="1" fill="#fff"/>
+                <rect x="3" y="11" width="18" height="2" rx="1" fill="#fff"/>
+                <rect x="3" y="16" width="18" height="2" rx="1" fill="#fff"/>
+              </svg>
+              Danh mục
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" className="ml-1">
+                <path d="M7 10l5 5 5-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            {showMenu && (
+              <div
+                className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg z-20"
+                style={{ minWidth: 210 }}
+                onMouseLeave={() => setShowMenu(false)}
+              >
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.href}
+                    href={cat.href}
+                    className="flex items-center gap-3 px-4 py-3 transition font-medium text-blue-900 hover:text-white hover:bg-[#21a5f5]"
+                    style={{
+                      borderRadius: 8,
+                    }}
+                    onClick={() => setShowMenu(false)}
+                  >
+                    <img src={cat.icon} alt={cat.label} className="h-7 w-7 object-contain" />
+                    <span>{cat.label}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Thanh tìm kiếm */}
+          <div className="flex-1 flex justify-center">
+            <form
+              onSubmit={handleSearch}
+              className="relative w-full max-w-2xl"
+              style={{ minWidth: 320 }}
+            >
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Bạn tìm gì..."
+                className="w-full rounded-full px-6 py-3 pr-14 text-lg border border-blue-200 focus:outline-none focus:border-blue-500 shadow transition"
+                style={{
+                  background: "#fff",
+                  color: "#222",
+                  fontWeight: 500,
+                  boxShadow: "0 2px 12px #1976d211",
+                }}
+              />
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white rounded-full w-10 h-10 flex items-center justify-center transition"
+                style={{ boxShadow: "0 2px 8px #1976d233" }}
+                aria-label="Tìm kiếm"
+              >
+                <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="7" stroke="white" strokeWidth="2" />
+                  <path
+                    d="M20 20L16.65 16.65"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            </form>
+          </div>
+        </div>
+
         {/* Bộ lọc và sắp xếp */}
         <div
           style={{
@@ -218,161 +399,159 @@ export default function TimKiemPage() {
               }}
             >
               {paginatedResults.map((p, idx) => (
-                <div
+                <Link
                   key={p.id || idx}
-                  style={{
-                    background: "#fff",
-                    borderRadius: 20,
-                    boxShadow: "0 4px 18px #0002",
-                    padding: 20,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    transition: "box-shadow 0.2s, transform 0.2s",
-                    minHeight: 390,
-                    position: "relative",
-                    border: "1.5px solid #e3eafc",
-                    cursor: "pointer",
-                    overflow: "hidden",
-                  }}
-                  onMouseOver={e => {
-                    e.currentTarget.style.boxShadow = "0 8px 32px #1976d233";
-                    e.currentTarget.style.transform = "translateY(-4px) scale(1.02)";
-                  }}
-                  onMouseOut={e => {
-                    e.currentTarget.style.boxShadow = "0 4px 18px #0002";
-                    e.currentTarget.style.transform = "none";
-                  }}
+                  href={`/product/${p.id}`}
+                  style={{ textDecoration: "none" }}
+                  onClick={() => console.log("Đi tới sản phẩm id:", p.id)}
                 >
-                  {/* Gắn nhãn nếu có */}
-                  {p.isHot && (
-                    <span
-                      style={{
-                        position: "absolute",
-                        top: 14,
-                        left: 14,
-                        background: "linear-gradient(90deg,#ff9800 60%,#ffd54f 100%)",
-                        color: "#fff",
-                        borderRadius: 8,
-                        padding: "3px 12px",
-                        fontSize: 13,
-                        fontWeight: 700,
-                        letterSpacing: 1,
-                        boxShadow: "0 2px 8px #ff980033",
-                      }}
-                    >
-                      NỔI BẬT
-                    </span>
-                  )}
-                  {p.isNew && (
-                    <span
-                      style={{
-                        position: "absolute",
-                        top: 14,
-                        right: 14,
-                        background: "linear-gradient(90deg,#1976d2 60%,#64b5f6 100%)",
-                        color: "#fff",
-                        borderRadius: 8,
-                        padding: "3px 12px",
-                        fontSize: 13,
-                        fontWeight: 700,
-                        letterSpacing: 1,
-                        boxShadow: "0 2px 8px #1976d233",
-                      }}
-                    >
-                      MỚI
-                    </span>
-                  )}
-                  {p.discount > 0 && (
-                    <span
-                      style={{
-                        position: "absolute",
-                        bottom: 14,
-                        left: 14,
-                        background: "linear-gradient(90deg,#d32f2f 60%,#ff8a65 100%)",
-                        color: "#fff",
-                        borderRadius: 8,
-                        padding: "3px 12px",
-                        fontSize: 13,
-                        fontWeight: 700,
-                        letterSpacing: 1,
-                        boxShadow: "0 2px 8px #d32f2f33",
-                      }}
-                    >
-                      GIẢM {p.discount}%
-                    </span>
-                  )}
-                  <img
-                    src={Array.isArray(p.images) ? p.images[0] : p.imageUrl}
-                    alt={p.name}
-                    style={{
-                      width: "100%",
-                      height: 180,
-                      objectFit: "contain",
-                      borderRadius: 14,
-                      marginBottom: 14,
-                      background: "#f9f9f9",
-                      boxShadow: "0 2px 8px #1976d211",
-                      display: "block",
-                    }}
-                  />
-                  <h3
-                    style={{
-                      fontSize: 19,
-                      color: "#1976d2",
-                      margin: "10px 0 6px",
-                      fontWeight: 700,
-                      textAlign: "center",
-                    }}
-                  >
-                    {p.name}
-                  </h3>
-                  <div style={{ color: "#555", fontSize: 15, marginBottom: 4 }}>
-                    Thương hiệu: <b>{p.brand}</b>
-                  </div>
                   <div
                     style={{
-                      color: "#d32f2f",
-                      fontWeight: 700,
-                      fontSize: 18,
-                      marginBottom: 8,
-                    }}
-                  >
-                    {p.price?.toLocaleString()}₫
-                  </div>
-                  <div
-                    style={{
-                      color: "#555",
-                      fontSize: 15,
-                      marginBottom: 18,
-                      textAlign: "center",
-                    }}
-                  >
-                    {p.description}
-                  </div>
-                  <button
-                    style={{
-                      background: "linear-gradient(90deg,#1976d2 60%,#64b5f6 100%)",
-                      color: "#fff",
-                      border: "none",
+                      background: "#fff",
                       borderRadius: 20,
-                      padding: "10px 28px",
-                      fontWeight: 600,
+                      boxShadow: "0 4px 18px #0002",
+                      padding: 20,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      transition: "box-shadow 0.2s, transform 0.2s",
+                      minHeight: 390,
+                      position: "relative",
+                      border: "1.5px solid #e3eafc",
                       cursor: "pointer",
-                      fontSize: 16,
-                      marginTop: "auto",
-                      boxShadow: "0 2px 8px #1976d233",
-                      transition: "background 0.2s",
+                      overflow: "hidden",
                     }}
-                    onMouseOver={e => e.currentTarget.style.background = "linear-gradient(90deg,#1565c0 60%,#42a5f5 100%)"}
-                    onMouseOut={e => e.currentTarget.style.background = "linear-gradient(90deg,#1976d2 60%,#64b5f6 100%)"}
-                    onClick={() =>
-                      alert("Chức năng xem chi tiết sẽ được bổ sung!")
-                    }
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.boxShadow = "0 8px 32px #1976d233";
+                      e.currentTarget.style.transform = "translateY(-4px) scale(1.02)";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.boxShadow = "0 4px 18px #0002";
+                      e.currentTarget.style.transform = "none";
+                    }}
                   >
-                    Xem chi tiết
-                  </button>
-                </div>
+                    {/* Gắn nhãn nếu có */}
+                    {p.isHot && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          top: 14,
+                          left: 14,
+                          background: "linear-gradient(90deg,#ff9800 60%,#ffd54f 100%)",
+                          color: "#fff",
+                          borderRadius: 8,
+                          padding: "3px 12px",
+                          fontSize: 13,
+                          fontWeight: 700,
+                          letterSpacing: 1,
+                          boxShadow: "0 2px 8px #ff980033",
+                        }}
+                      >
+                        NỔI BẬT
+                      </span>
+                    )}
+                    {p.isNew && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          top: 14,
+                          right: 14,
+                          background: "linear-gradient(90deg,#1976d2 60%,#64b5f6 100%)",
+                          color: "#fff",
+                          borderRadius: 8,
+                          padding: "3px 12px",
+                          fontSize: 13,
+                          fontWeight: 700,
+                          letterSpacing: 1,
+                          boxShadow: "0 2px 8px #1976d233",
+                        }}
+                      >
+                        MỚI
+                      </span>
+                    )}
+                    {p.discount > 0 && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          bottom: 14,
+                          left: 14,
+                          background: "linear-gradient(90deg,#d32f2f 60%,#ff8a65 100%)",
+                          color: "#fff",
+                          borderRadius: 8,
+                          padding: "3px 12px",
+                          fontSize: 13,
+                          fontWeight: 700,
+                          letterSpacing: 1,
+                          boxShadow: "0 2px 8px #d32f2f33",
+                        }}
+                      >
+                        GIẢM {p.discount}%
+                      </span>
+                    )}
+                    <img
+                      src={Array.isArray(p.images) ? p.images[0] : p.imageUrl}
+                      alt={p.name}
+                      style={{
+                        width: "100%",
+                        height: 180,
+                        objectFit: "contain",
+                        borderRadius: 14,
+                        marginBottom: 14,
+                        background: "#f9f9f9",
+                        boxShadow: "0 2px 8px #1976d211",
+                        display: "block",
+                      }}
+                    />
+                    <h3
+                      style={{
+                        fontSize: 19,
+                        color: "#1976d2",
+                        margin: "10px 0 6px",
+                        fontWeight: 700,
+                        textAlign: "center",
+                      }}
+                    >
+                      {p.name}
+                    </h3>
+                    <div style={{ color: "#555", fontSize: 15, marginBottom: 4 }}>
+                      {/* Nếu có trường category */}
+                      Danh mục:{" "}
+                      <Link
+                        key={p.id || idx}
+                        href={`/danh-muc/${encodeURIComponent(p.category)}`}
+                        style={{ textDecoration: "none" }}
+                        onClick={() => console.log("Đi tới danh mục:", p.category)}
+                      >
+                        <div>
+                          {/* ...nội dung sản phẩm... */}
+                        </div>
+                      </Link>
+                    </div>
+                    <div style={{ color: "#555", fontSize: 15, marginBottom: 4 }}>
+                      Thương hiệu: <b>{p.brand}</b>
+                    </div>
+                    <div
+                      style={{
+                        color: "#d32f2f",
+                        fontWeight: 700,
+                        fontSize: 18,
+                        marginBottom: 8,
+                      }}
+                    >
+                      {p.price?.toLocaleString()}₫
+                    </div>
+                    <div
+                      style={{
+                        color: "#555",
+                        fontSize: 15,
+                        marginBottom: 18,
+                        textAlign: "center",
+                      }}
+                    >
+                      {p.description}
+                    </div>
+                  </div>
+                </Link>
               ))}
             </div>
             {/* Phân trang */}
@@ -436,6 +615,9 @@ export default function TimKiemPage() {
           </>
         )}
       </div>
+
+      {/* Footer ở cuối trang */}
+      <Footer />
     </div>
   );
 }

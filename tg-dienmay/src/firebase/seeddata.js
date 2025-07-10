@@ -12,7 +12,7 @@ const categories = [
   { id: "ac", name: "Máy Lạnh" },
   { id: "tv", name: "Tivi" },
   { id: "fridge", name: "Tủ Lạnh" },
-  { id: "washer", name: "Máy Giặt" },
+  { id: "washer", name: "Máy Giặt" },   
   { id: "microwave", name: "Lò Vi Sóng" }
 ];
 
@@ -23,7 +23,8 @@ const products = [
     category: "ac",
     price: 7200000,
     imageUrl: "https://cdn.tgdd.vn/Products/Images/211/303222/may-lanh-panasonic-cu-cs-pu9wkh-8m-1-1hp-inverter-080223-104919-600x600.jpg",
-    description: "Tiết kiệm điện, làm lạnh nhanh, công nghệ Inverter hiện đại."
+    description: "Tiết kiệm điện, làm lạnh nhanh, công nghệ Inverter hiện đại.",
+    brand: "Panasonic"
   },
   {
     name: "Tivi Samsung 50 inch 4K UHD",
@@ -188,3 +189,11 @@ export const seedAll = async () => {
 
   console.log("🎉 Seed hoàn tất!");
 };
+
+// Chạy seedAll khi file được thực thi trực tiếp (node src/firebase/seeddata.js)
+if (require.main === module) {
+  seedAll().then(() => {
+    console.log("Đã seed xong!");
+    process.exit(0);
+  });
+}

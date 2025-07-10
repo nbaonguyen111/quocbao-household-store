@@ -12,7 +12,7 @@ const categories = [
   { id: 'tv', name: 'Tivi', icon: '/images/tivi.png' },
   { id: 'fridge', name: 'Tủ Lạnh', icon: '/images/tulanh.png' },
   { id: 'washer', name: 'Máy Giặt', icon: '/images/maygiat.png' },
-  { id: 'microwave', name: 'Máy quạt', icon: '/images/mayquat.png' }
+  { id: 'microwave', name: 'Lò Vi Sóng', icon: '/images/lovisong.png' }
 ];
 
 export default function Navbar() {
@@ -98,7 +98,7 @@ export default function Navbar() {
                   {categories.map((cat) => (
                     <li key={cat.id}>
                       <a
-                        href={`/san-pham?category=${cat.id}`}
+                        href={`/danh-muc/${cat.id}`}
                         className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 transition text-gray-800 hover:text-blue-700 font-medium"
                         onClick={() => setShowDropdown(false)}
                       >

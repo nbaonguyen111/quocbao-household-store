@@ -45,6 +45,11 @@ export default function Footer() {
                         <li><a href="#" className="hover:underline">Đăng ký bán hàng CTV chiết khấu cao</a></li>
                         <li><a href="#" className="hover:underline">Tìm hiểu về mua trả chậm</a></li>
                         <li><a href="/faq" className="hover:underline">Câu hỏi thường gặp (FAQ)</a></li>
+                        <li>
+                            <a href="/tim-kiem" className="hover:underline text-blue-600 font-semibold">
+                                Tìm kiếm sản phẩm
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 {/* Website cùng tập đoàn & Mạng xã hội */}
