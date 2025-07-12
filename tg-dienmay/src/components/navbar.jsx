@@ -163,7 +163,7 @@ export default function Navbar() {
 
     {showDropdownAc && (
     <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg z-50">
-      <a href={`/tai-khoan/${user.uid}`} className="block px-4 py-2 hover:bg-gray-100">
+      <a href="/tai-khoan" className="block px-4 py-2 hover:bg-gray-100">
         Thông tin tài khoản
       </a>
       <a href="/lich-su-don-hang" className="block px-4 py-2 hover:bg-gray-100">
