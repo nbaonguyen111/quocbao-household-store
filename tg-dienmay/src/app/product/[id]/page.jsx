@@ -90,10 +90,19 @@ export default function ProductDetail() {
       toast.error("Vui lòng chọn số sao và nhập nội dung đánh giá!");
       return;
     }
+
+
     try {
+      let userName = "Khách";
+      if (userId) {
+        const userDoc = await getDoc(doc(db, "users", userId));
+        if (userDoc.exists()) {
+          userName = userDoc.data().name || "Khách";
+        }
+      }
       await addDoc(collection(db, "products", id, "reviews"), {
         text: review,
-        userId: userId || "Khách",
+       userName,
         date: new Date().toLocaleString("vi-VN"),
         rating,
       });
@@ -307,7 +316,7 @@ export default function ProductDetail() {
                     <span className="text-xs text-gray-500">{ratingLabels[r.rating-1]}</span>
                   </div>
                   <div className="text-sm text-gray-700">{r.text}</div>
-                  <div className="text-xs text-gray-400">{r.userId} - {r.date}</div>
+                  <div className="text-xs text-gray-400">{r.userName} - {r.date}</div>
                 </div>
               ))}
             </div>
