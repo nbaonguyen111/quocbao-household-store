@@ -4,12 +4,15 @@ import { useParams } from "next/navigation";
 import { db } from "@/firebase/firebase";
 import Navbar from '../../../components/navbar'
 import Footer from '../../../components/footer'
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc, addDoc } from "firebase/firestore";
 import { addToCart } from "@/app/gio-hang/addtocart";
 import { Toaster, toast } from 'react-hot-toast';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default function ProductDetail() {
+  const [review, setReview] = useState("");
+  const [reviews, setReviews] = useState([]);
+  const [rating, setRating] = useState(0);
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -18,6 +21,52 @@ export default function ProductDetail() {
   const [tempAddress, setTempAddress] = useState(address);
   const [deliveryTime, setDeliveryTime] = useState("");
   const [userId, setUserId] = useState(null);
+
+  const ratingLabels = ["Rất tệ", "Tệ", "Tạm ổn", "Tốt", "Rất tốt"];
+
+  // Lấy userId từ Firebase Auth
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) setUserId(user.uid);
+      else setUserId("demoUser");
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Lấy thông tin sản phẩm
+  useEffect(() => {
+    async function fetchProduct() {
+      if (!id) return;
+      const docRef = doc(db, "products", id);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setProduct({ id: docSnap.id, ...docSnap.data() });
+      }
+    }
+    fetchProduct();
+  }, [id]);
+
+  // Lấy đánh giá từ Firestore khi load trang
+  useEffect(() => {
+    async function fetchReviews() {
+      if (!id) return;
+      const reviewsCol = collection(db, "products", id, "reviews");
+      const snapshot = await getDocs(reviewsCol);
+      setReviews(snapshot.docs.map(doc => doc.data()));
+    }
+    fetchReviews();
+  }, [id]);
+
+  // Cập nhật thời gian giao hàng thực tế
+  useEffect(() => {
+    const now = new Date();
+    const start = new Date(now.getTime() + 2 * 60 * 60 * 1000); // +2h
+    const end = new Date(now.getTime() + 4 * 60 * 60 * 1000);   // +4h
+    const format = (d) => d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+    setDeliveryTime(`${format(start)} - ${format(end)} hôm nay (${now.getDate().toString().padStart(2, "0")}/${(now.getMonth() + 1).toString().padStart(2, "0")})`);
+  }, []);
+
   const handleConfirmAddress = async () => {
     setAddress(tempAddress);
     setShowAddressModal(false);
@@ -26,46 +75,52 @@ export default function ProductDetail() {
     }
   };
 
-  // Lấy userId từ Firebase Auth
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) setUserId(user.uid);
-      else setUserId("demoUser"); // fallback nếu chưa đăng nhập
-    });
-    return () => unsubscribe();
-  }, []);
-
   const handleAddToCart = async () => {
     if (!product || !userId) return;
     await addToCart(userId, { ...product, quantity });
     toast.success("Đã thêm vào giỏ hàng!");
   };
 
-  useEffect(() => {
-    async function fetchProduct() {
-      const docRef = doc(db, "products", id);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setProduct({ id: docSnap.id, ...docSnap.data() });
-      }
-    }
-    if (id) fetchProduct();
-  }, [id]);
+  const handleStarClick = (star) => {
+    if (userId !== "demoUser") setRating(star);
+  };
 
-  useEffect(() => {
-    // Cập nhật thời gian giao hàng thực tế
-    const now = new Date();
-    const start = new Date(now.getTime() + 2 * 60 * 60 * 1000); // +2h
-    const end = new Date(now.getTime() + 4 * 60 * 60 * 1000);   // +4h
-    const format = (d) => d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-    setDeliveryTime(`${format(start)} - ${format(end)} hôm nay (${now.getDate().toString().padStart(2, "0")}/${(now.getMonth() + 1).toString().padStart(2, "0")})`);
-  }, []);
+  const handleSubmitReview = async () => {
+    if (!review.trim() || rating === 0) {
+      toast.error("Vui lòng chọn số sao và nhập nội dung đánh giá!");
+      return;
+    }
+
+
+    try {
+      let userName = "Khách";
+      if (userId) {
+        const userDoc = await getDoc(doc(db, "users", userId));
+        if (userDoc.exists()) {
+          userName = userDoc.data().name || "Khách";
+        }
+      }
+      await addDoc(collection(db, "products", id, "reviews"), {
+        text: review,
+       userName,
+        date: new Date().toLocaleString("vi-VN"),
+        rating,
+      });
+      setReview("");
+      setRating(0);
+      toast.success("Gửi đánh giá thành công!");
+      // Reload lại danh sách đánh giá
+      const reviewsCol = collection(db, "products", id, "reviews");
+      const snapshot = await getDocs(reviewsCol);
+      setReviews(snapshot.docs.map(doc => doc.data()));
+    } catch (err) {
+      toast.error("Lỗi khi gửi đánh giá!");
+    }
+  };
 
   if (!product) return <div>Đang tải...</div>;
 
   return (
-
     <>
       <Navbar />
       <Toaster />
@@ -195,6 +250,76 @@ export default function ProductDetail() {
                 </tr>
               </tbody>
             </table>
+          </div>
+          {/* Đánh giá khách hàng */}
+          <div className="bg-white p-6 rounded-lg shadow mt-4 w-[560px]">
+            <h3 className="font-semibold text-lg mb-3 border-b pb-2">Đánh giá của khách hàng</h3>
+            <div className="mb-4">
+              {/* Đánh giá bằng sao */}
+              <div className="flex items-center gap-3 mb-2 justify-center">
+                {[1,2,3,4,5].map((star) => (
+                  <span key={star} className="flex flex-col items-center">
+                    <svg
+                      onClick={() => handleStarClick(star)}
+                      width="32" height="32" viewBox="0 0 24 24"
+                      fill={star <= rating ? "#FFA500" : "none"}
+                      stroke="#FFA500"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="cursor-pointer"
+                      style={{ transition: "fill 0.2s" }}
+                    >
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span className="text-xs mt-1">{ratingLabels[star-1]}</span>
+                  </span>
+                ))}
+              </div>
+              <textarea
+                className="border rounded px-3 py-2 w-full"
+                rows={3}
+                value={review}
+                onChange={e => setReview(e.target.value)}
+                placeholder="Viết đánh giá của bạn về sản phẩm..."
+                disabled={userId === "demoUser"}
+              />
+              <button
+                className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded"
+                onClick={handleSubmitReview}
+                disabled={userId === "demoUser"}
+              >
+                Gửi đánh giá
+              </button>
+              {userId === "demoUser" && (
+                <div className="text-red-500 mt-2 text-sm">Bạn cần đăng nhập để gửi đánh giá.</div>
+              )}
+            </div>
+            <div>
+              {reviews.length === 0 && (
+                <div className="text-gray-500">Chưa có đánh giá nào.</div>
+              )}
+              {reviews.map((r, idx) => (
+                <div key={idx} className="border-b py-2">
+                  <div className="flex items-center gap-2">
+                    {[1,2,3,4,5].map(star => (
+                      <svg key={star} width="18" height="18" viewBox="0 0 24 24"
+                        fill={star <= r.rating ? "#FFA500" : "none"}
+                        stroke="#FFA500"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                      </svg>
+                    ))}
+                    <span className="text-xs text-gray-500">{ratingLabels[r.rating-1]}</span>
+                  </div>
+                  <div className="text-sm text-gray-700">{r.text}</div>
+                  <div className="text-xs text-gray-400">{r.userName} - {r.date}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </main>

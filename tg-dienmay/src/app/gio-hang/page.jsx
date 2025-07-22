@@ -21,7 +21,7 @@ export default function Giohang() {
         setUserId(user.uid);
       } else {
         // Nếu chưa đăng nhập → có thể điều hướng về trang login hoặc hiển thị cảnh báo
-        router.push("/login"); // hoặc setUserId("guest")
+        router.push("/dang-nhap"); // hoặc setUserId("guest")
       }
     });
 

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { addToCart } from "./gio-hang/addtocart";
 import toast from "react-hot-toast";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import Link from 'next/link';
 
 
 
@@ -165,10 +166,9 @@ const handleAddToCart = async (product) => {
             <div>Đang tải...</div>
           ) : (
             featuredProducts.map((sp) => (
-              <div key={sp.id} className="bg-white text-yellow-500 rounded-lg shadow p-3 w-60 flex flex-col items-center">
-                <a href={`product/${sp.id}`}>
+              <Link href={`product/${sp.id}`} key={sp.id} className="bg-white text-yellow-500 rounded-lg shadow p-3 w-60 flex flex-col items-center">
                 <img src={`images/${sp.imageUrl}`} alt={sp.name} className="w-full h-28 object-contain mb-2" />
-                <div className="font-semibold mb-1"><a href={`product/${sp.id}`}>{sp.name}</a></div>
+                <div className="font-semibold mb-1">{sp.name}</div>
                 <div className="text-red-600 text-lg font-bold mb-1">
                   {sp.price?.toLocaleString()}₫
                 </div>
@@ -176,8 +176,8 @@ const handleAddToCart = async (product) => {
                   <span>★</span>
                   <span className="ml-1">{sp.rating}</span>
                 </div>
-                </a>
-              </div>
+                
+              </Link>
             ))
           )}
         </div>
@@ -210,18 +210,18 @@ const handleAddToCart = async (product) => {
           ) : (
             allProducts.map((sp) => (
               
-              <div key={sp.id} className="bg-white text-yellow-500 rounded-lg shadow p-3 w-60 flex flex-col items-center">
-                <a href={`product/${sp.id}`}>
+              <Link href={`product/${sp.id}`}key={sp.id} className="bg-white text-yellow-500 rounded-lg shadow p-3 w-60 flex flex-col items-center" >
+                
                 <img src={`images/${sp.imageUrl}`} alt={sp.name} className="w-full h-28 object-contain mb-2" />
-                <div className="font-semibold mb-1"><a href={`product/${sp.id}`}>{sp.name}</a></div>
+                <div className="font-semibold mb-1">{sp.name}</div>
                 <div className="text-red-600 text-lg font-bold mb-1">
                   {sp.price?.toLocaleString()}₫
                 </div>
                  <div className="flex items-center text-yellow-500 text-sm">
                   <button onClick={() => handleAddToCart(sp)} className="bg-blue-500 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded">Thêm vào giỏ hàng</button>
                 </div> 
-                </a>
-              </div>
+             
+              </Link>
             ))
           )}
         </div>
