@@ -32,12 +32,19 @@ export default function Navbar() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-
-        // Lấy thêm info từ Firestore nếu cần
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setUserData(docSnap.data());
+          const data = docSnap.data();
+          if (data.status === 'locked') {
+            alert('Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên Zalo:0866633426.');
+            await signOut(auth);
+            setUser(null);
+            setUserData(null);
+            router.push('/dang-nhap');
+            return;
+          }
+          setUserData(data);
         }
       } else {
         setUser(null);
@@ -63,7 +70,7 @@ export default function Navbar() {
 
   return (
     <div>
-      
+
       {/* Banner phía trên */}
       <img
         src="/images/banner1.png"
@@ -123,7 +130,7 @@ export default function Navbar() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
-              
+
               <button
                 type="submit"
                 className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-800 text-white rounded-full p-1.5 transition"
@@ -139,47 +146,47 @@ export default function Navbar() {
 
           {/* Đăng nhập */}
 
-            
-          {!user ? (
-  <a href="/dang-nhap" className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-700 transition">
-    <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-    Đăng nhập
-  </a>
-) : (
-  <div
-  className="relative"
-  onMouseEnter={() => setShowDropdownAc(true)}
-  onMouseLeave={() => setShowDropdownAc(false)}
->
-    <button className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-700 transition">
-      👋 {userData?.name || user.email}
-      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-      </svg>
-    </button>
 
-    {showDropdownAc && (
-    <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg z-50">
-      <a href="/tai-khoan" className="block px-4 py-2 hover:bg-gray-100">
-        Thông tin tài khoản
-      </a>
-      <a href="/lich-su-don-hang" className="block px-4 py-2 hover:bg-gray-100">
-        Lịch sử đơn hàng
-      </a>
-      <button
-        onClick={handleLogout}
-        disabled={loading}
-        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
-      >
-        {loading ? "Đang đăng xuất..." : "Đăng xuất"}
-      </button>
-    </div>
-  )}
-</div>
-)}
+          {!user ? (
+            <a href="/dang-nhap" className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-700 transition">
+              <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Đăng nhập
+            </a>
+          ) : (
+            <div
+              className="relative"
+              onMouseEnter={() => setShowDropdownAc(true)}
+              onMouseLeave={() => setShowDropdownAc(false)}
+            >
+              <button className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-700 transition">
+                👋 {userData?.name || user.email}
+                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {showDropdownAc && (
+                <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg z-50">
+                  <a href="/tai-khoan" className="block px-4 py-2 hover:bg-gray-100">
+                    Thông tin tài khoản
+                  </a>
+                  <a href="/lich-su-don-hang" className="block px-4 py-2 hover:bg-gray-100">
+                    Lịch sử đơn hàng
+                  </a>
+                  <button
+                    onClick={handleLogout}
+                    disabled={loading}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
+                  >
+                    {loading ? "Đang đăng xuất..." : "Đăng xuất"}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
 
           {/* Giỏ hàng */}

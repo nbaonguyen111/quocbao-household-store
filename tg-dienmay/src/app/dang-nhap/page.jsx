@@ -6,7 +6,7 @@ import { auth, db } from "@/firebase/firebase";
 import Navbar from '../../components/navbar'
 import Footer from '../../components/footer'
 import { getDoc, doc } from "firebase/firestore";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,9 +26,13 @@ export default function Login() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
+        if (userData.status === 'locked') {
+          setError("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên Zalo:0866633426.");
+          return;
+        }
         setUserRole(userData.role || "user");
         if (userData.role === "admin") {
-          router.push ("/admin");
+          router.push("/admin");
         } else {
           console.log("Đăng nhập thành công, role:", userData.role);
           router.push("/");
@@ -46,40 +50,40 @@ export default function Login() {
     <div>
       <Navbar />
       <main>
-        <div className="max-w-md mx-auto p-4 border rounded mt-8"> 
-      <h1 className="text-2xl font-bold mb-4 text-center">Đăng nhập</h1>
-      <form onSubmit={handleLogin} className="space-y-4">
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border p-2"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Mật khẩu"
-          className="w-full border p-2"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button
-          type="submit"
-          className="bg-red-500 text-white py-2 px-4 rounded w-full"
-        >
-          Đăng nhập
-        </button>
-        <span>Bạn chưa có tài khoản? <a href="/dang-ky" className="text-blue-500">Đăng ký</a></span>
-      </form>
-      {error && <p className="text-red-500 mt-2">{error}</p>}
-      {userRole && (
-        <p className="text-green-600 mt-2">Bạn đang đăng nhập với vai trò: <strong>{userRole}</strong></p>
-      )}
-      </div>
-    </main>
-    <Footer />
+        <div className="max-w-md mx-auto p-4 border rounded mt-8">
+          <h1 className="text-2xl font-bold mb-4 text-center">Đăng nhập</h1>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input
+              type="email"
+              placeholder="Email"
+              className="w-full border p-2"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Mật khẩu"
+              className="w-full border p-2"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="submit"
+              className="bg-red-500 text-white py-2 px-4 rounded w-full"
+            >
+              Đăng nhập
+            </button>
+            <span>Bạn chưa có tài khoản? <a href="/dang-ky" className="text-blue-500">Đăng ký</a></span>
+          </form>
+          {error && <p className="text-red-500 mt-2">{error}</p>}
+          {userRole && (
+            <p className="text-green-600 mt-2">Bạn đang đăng nhập với vai trò: <strong>{userRole}</strong></p>
+          )}
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 }
