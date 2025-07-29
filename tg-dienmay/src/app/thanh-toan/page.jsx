@@ -34,7 +34,6 @@ export default function Thanhtoan() {
             setCartItems([]);
             toast.success("Thanh toán thành công!", {
                 duration: 1200,
-                // Khi toast đóng thì chuyển trang
                 onClose: () => router.push("/TrangChu")
             });
         } catch (err) {
@@ -56,8 +55,6 @@ export default function Thanhtoan() {
             const itemsCol = collection(db, "carts", userId, "items");
             const snapshot = await getDocs(itemsCol);
             const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-            // Gộp các mặt hàng trùng tên
             const merged = [];
             items.forEach(item => {
                 const found = merged.find(i => i.name === item.name);
@@ -69,8 +66,6 @@ export default function Thanhtoan() {
                 }
             });
             setCartItems(merged);
-
-            // Lấy địa chỉ giao hàng
             const cartDoc = await getDoc(doc(db, "carts", userId));
             if (cartDoc.exists()) {
                 setShippingAddress(cartDoc.data().address || "");
@@ -78,8 +73,6 @@ export default function Thanhtoan() {
         };
         fetchCart();
     }, [userId]);
-
-    // Tính tổng tiền
     const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
 
     return (
@@ -142,7 +135,6 @@ export default function Thanhtoan() {
                             )}
                         </tbody>
                     </table>
-                    {/* Đường kẻ đỏ và tổng tiền */}
                     <div className="border-b-4 border-red-500 my-4"></div>
                     <div className="text-right font-bold text-lg text-red-600 mb-4">
                         Tổng tiền cần thanh toán: {totalPrice.toLocaleString()}₫

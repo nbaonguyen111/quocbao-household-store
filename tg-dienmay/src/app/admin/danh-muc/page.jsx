@@ -12,7 +12,6 @@ export default function Danhmuc() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
-  // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
@@ -23,15 +22,12 @@ export default function Danhmuc() {
     fetchCategories();
   }, []);
 
-  // Toast message
   useEffect(() => {
     if (message) {
       const t = setTimeout(() => setMessage(""), 2000);
       return () => clearTimeout(t);
     }
   }, [message]);
-
-  // Add category
   const handleAdd = async (e) => {
     e.preventDefault();
     if (!name.trim()) return;
@@ -40,8 +36,6 @@ export default function Danhmuc() {
     setName("");
     setMessage("Thêm danh mục thành công!");
   };
-
-  // Delete category
   const handleDelete = async (id) => {
     if (!confirm("Bạn chắc chắn muốn xóa danh mục này?")) return;
     await deleteDoc(doc(db, "categories", id));
@@ -49,7 +43,6 @@ export default function Danhmuc() {
     setMessage("Đã xóa danh mục!");
   };
 
-  // Edit category
   const handleEdit = (id, name) => {
     setEditingId(id);
     setEditingName(name);
@@ -63,8 +56,6 @@ export default function Danhmuc() {
     setEditingName("");
     setMessage("Cập nhật thành công!");
   };
-
-  // Badge màu ngẫu nhiên cho từng danh mục
   const badgeColors = [
     "bg-blue-200 text-blue-700",
     "bg-green-200 text-green-700",
@@ -80,13 +71,11 @@ export default function Danhmuc() {
         <h1 className="text-2xl font-bold text-blue-700 mb-6 flex items-center gap-2">
           <FaList className="text-blue-500" /> Quản lý danh mục sản phẩm
         </h1>
-        {/* Toast message */}
         {message && (
           <div className="mb-4 px-4 py-2 bg-green-100 border border-green-300 text-green-700 rounded shadow text-center animate-bounce">
             {message}
           </div>
         )}
-        {/* Thêm danh mục */}
         <form onSubmit={editingId ? handleUpdate : handleAdd} className="flex gap-2 mb-6">
           <input
             type="text"
@@ -113,7 +102,6 @@ export default function Danhmuc() {
             </button>
           )}
         </form>
-        {/* Danh sách danh mục */}
         <div className="overflow-x-auto">
           <table className="min-w-full border text-sm rounded-lg overflow-hidden shadow">
             <thead>

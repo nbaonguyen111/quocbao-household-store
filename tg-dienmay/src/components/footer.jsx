@@ -8,7 +8,6 @@ export default function Footer() {
     return (
         <footer className="bg-white rounded-lg shadow-sm mt-4 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
             <div className="w-full mx-auto max-w-screen-xl p-6 grid grid-cols-1 md:grid-cols-4 gap-8 text-sm text-gray-700 dark:text-gray-300">
-                {/* Tổng đài hỗ trợ */}
                 <div>
                     <div className="font-bold mb-2 text-blue-700">Tổng đài hỗ trợ</div>
                     <div>
@@ -24,7 +23,6 @@ export default function Footer() {
                         <a href="/lien-he" className="text-blue-600 hover:underline">Liên hệ & Hỗ trợ</a>
                     </div>
                 </div>
-                {/* Về công ty */}
                 <div>
                     <div className="font-bold mb-2 text-blue-700">Về công ty</div>
                     <ul className="space-y-1">
@@ -36,7 +34,6 @@ export default function Footer() {
                         <li><a href="/dieu-khoan" className="hover:underline">Điều khoản sử dụng</a></li>
                     </ul>
                 </div>
-                {/* Thông tin khác */}
                 <div>
                     <div className="font-bold mb-2 text-blue-700">Thông tin khác</div>
                     <ul className="space-y-1">
@@ -47,7 +44,6 @@ export default function Footer() {
                         <li><a href="/faq" className="hover:underline">Câu hỏi thường gặp (FAQ)</a></li>
                     </ul>
                 </div>
-                {/* Website cùng tập đoàn & Mạng xã hội */}
                 <div>
                     <div className="font-bold mb-2 text-blue-700">Website cùng tập đoàn</div>
                     <div className="flex flex-wrap gap-2 mb-2 items-center">

@@ -18,7 +18,6 @@ export default function LienHePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Xử lý gửi form ở đây (gửi email, lưu vào DB, v.v.)
     setSubmitted(true);
   };
 
@@ -94,11 +93,8 @@ export default function LienHePage() {
             </button>
           </form>
         )}
-
-        {/* Hai cột FAQ và Thông tin liên hệ nhanh */}
         <div className="mt-8 border-t pt-6">
           <div className="flex flex-col md:flex-row gap-8">
-            {/* Câu hỏi thường gặp */}
             <div className="flex-1">
               <h2 className="text-xl font-semibold text-blue-700 mb-2">Câu hỏi thường gặp</h2>
               <ul className="space-y-3 text-gray-700">
@@ -128,7 +124,6 @@ export default function LienHePage() {
                 </li>
               </ul>
             </div>
-            {/* Thông tin liên hệ nhanh */}
             <div className="flex-1">
               <h2 className="text-xl font-semibold text-blue-700 mb-2">Thông tin liên hệ nhanh</h2>
               <ul className="space-y-2 text-gray-700">
@@ -155,8 +150,6 @@ export default function LienHePage() {
             </div>
           </div>
         </div>
-
-        {/* Google Map */}
         <div className="mt-8 border-t pt-6">
           <h2 className="text-xl font-semibold text-blue-700 mb-2">Bản đồ cửa hàng</h2>
           <div className="rounded-lg overflow-hidden shadow border">

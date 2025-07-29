@@ -14,7 +14,7 @@ export default function Baocao() {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Lấy dữ liệu đơn hàng
+
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
@@ -25,7 +25,6 @@ export default function Baocao() {
     fetchOrders();
   }, []);
 
-  // Lọc theo ngày
   useEffect(() => {
     if (!from && !to) {
       setFilteredOrders(orders);
@@ -43,11 +42,8 @@ export default function Baocao() {
       })
     );
   }, [from, to, orders]);
-
-  // Tổng doanh thu
   const totalRevenue = filteredOrders.reduce((sum, o) => sum + (o.total || 0), 0);
 
-  // Thống kê trạng thái đơn hàng
   const statusCount = {
     "Đã giao": 0,
     "Đang xử lý": 0,
@@ -61,7 +57,7 @@ export default function Baocao() {
     else statusCount["Khác"]++;
   });
 
-  // Biểu đồ doanh thu theo ngày
+
   const revenueByDate = {};
   filteredOrders.forEach(o => {
     const d = o.createdAt ? new Date(o.createdAt).toLocaleDateString() : "Không rõ";
@@ -78,7 +74,7 @@ export default function Baocao() {
     ],
   };
 
-  // Biểu đồ trạng thái đơn hàng
+
   const pieData = {
     labels: ["Đã giao", "Đang xử lý", "Đã hủy", "Khác"],
     datasets: [
@@ -101,7 +97,7 @@ export default function Baocao() {
         <h1 className="text-2xl font-bold text-blue-700 mb-6 flex items-center gap-2">
           <FaChartPie className="text-blue-500" /> Báo cáo bán hàng
         </h1>
-        {/* Bộ lọc ngày */}
+  
         <div className="flex gap-4 mb-6">
           <div>
             <label className="block text-sm font-medium mb-1">Từ ngày</label>
@@ -112,7 +108,6 @@ export default function Baocao() {
             <input type="date" value={to} onChange={e => setTo(e.target.value)} className="border rounded px-2 py-1" />
           </div>
         </div>
-        {/* Thống kê nhanh */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-blue-100 rounded-lg p-4 flex flex-col items-center shadow">
             <FaMoneyBillWave className="text-blue-600 text-2xl mb-1" />
@@ -135,7 +130,6 @@ export default function Baocao() {
             <div className="text-red-700 text-xs font-semibold">Đơn hủy</div>
           </div>
         </div>
-        {/* Biểu đồ */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div className="bg-blue-50 rounded-lg p-4 shadow">
             <h2 className="text-lg font-semibold mb-2 text-blue-700">Biểu đồ doanh thu theo ngày</h2>
@@ -146,7 +140,6 @@ export default function Baocao() {
             <Pie data={pieData} options={{ responsive: true, plugins: { legend: { position: "bottom" } } }} height={120} />
           </div>
         </div>
-        {/* Bảng đơn hàng */}
         <div>
           <h2 className="text-lg font-semibold mb-2 text-blue-700">Chi tiết đơn hàng</h2>
           {loading ? (

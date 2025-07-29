@@ -24,7 +24,6 @@ export default function Danhgia() {
             for (const reviewDoc of reviewsSnap.docs) {
                 const reviewData = reviewDoc.data();
                 let userName = reviewData.userId;
-                // Lấy tên đăng nhập từ collection users
                 if (reviewData.userId && reviewData.userId !== "Khách" && reviewData.userId !== "demoUser") {
                     const userRef = doc(db, "users", reviewData.userId);
                     const userSnap = await getDoc(userRef);

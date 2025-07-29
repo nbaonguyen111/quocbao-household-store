@@ -71,21 +71,17 @@ export default function Navbar() {
   return (
     <div>
 
-      {/* Banner phía trên */}
       <img
         src="/images/banner1.png"
         alt="Banner"
         className="w-full max-h-72 object-contain mx-auto"
       />
 
-      {/* Navbar chính */}
       <nav className="bg-[#2196f3] w-full">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-2 relative">
-          {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <img src="/images/logo1.png" alt="Logo" className="h-32 w-32" />
           </Link>
-          {/* Danh mục */}
           <div className="relative">
             <button
               className="flex items-center text-white font-semibold px-3 py-2 rounded hover:bg-blue-800 transition"
@@ -119,8 +115,6 @@ export default function Navbar() {
               </div>
             )}
           </div>
-
-          {/* Thanh tìm kiếm */}
           <form onSubmit={handleSearch} className="flex-1 mx-4 max-w-xl">
             <div className="relative">
               <input
@@ -143,10 +137,6 @@ export default function Navbar() {
               </button>
             </div>
           </form>
-
-          {/* Đăng nhập */}
-
-
           {!user ? (
             <a href="/dang-nhap" className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-700 transition">
               <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -187,9 +177,6 @@ export default function Navbar() {
               )}
             </div>
           )}
-
-
-          {/* Giỏ hàng */}
           <a href="/gio-hang" className="flex items-center text-white px-3 py-2 rounded hover:bg-blue-800 transition relative font-semibold">
             <svg className="w-5 h-5 mr-1 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <circle cx="9" cy="21" r="1" />

@@ -15,7 +15,7 @@ import {
 export default function Khachhang() {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 8; // Số dòng mỗi trang
+    const pageSize = 8; 
 
     const [showEditModal, setShowEditModal] = useState(false);
     const [editUser, setEditUser] = useState(null);
@@ -23,7 +23,7 @@ export default function Khachhang() {
     const [saving, setSaving] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [detailUser, setDetailUser] = useState(null);
-    const [lockLoading, setLockLoading] = useState(null); // id user đang xử lý lock/unlock
+    const [lockLoading, setLockLoading] = useState(null); 
     useEffect(() => {
         const fetchData = async () => {
             const q = query(collection(db, "users"), where("role", "==", "user"));
@@ -36,15 +36,11 @@ export default function Khachhang() {
         };
         fetchData();
     }, []);
-    // Tính tổng số trang
     const totalPages = Math.ceil(data.length / pageSize);
-    // Lấy dữ liệu trang hiện tại
     const paginatedData = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-    // Hàm chuyển trang
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) setCurrentPage(page);
     };
-    // Mở modal edit
     const handleEdit = (user) => {
         setEditUser(user);
         setEditForm({
@@ -78,7 +74,6 @@ export default function Khachhang() {
                 email: editForm.email,
                 role: editForm.role,
             });
-            // Cập nhật lại data local
             setData(prev => prev.map(u => u.id === editUser.id ? { ...u, ...editForm } : u));
             setShowEditModal(false);
             setEditUser(null);
@@ -95,14 +90,12 @@ export default function Khachhang() {
         setShowDetailModal(false);
         setDetailUser(null);
     };
-    // Hàm đổi trạng thái tài khoản
     const handleToggleLock = async (user) => {
         setLockLoading(user.id);
         try {
             const newStatus = user.status === 'locked' ? 'active' : 'locked';
             await updateDoc(doc(db, "users", user.id), { status: newStatus });
             setData(prev => prev.map(u => u.id === user.id ? { ...u, status: newStatus } : u));
-            // Nếu đang xem chi tiết user này thì cập nhật luôn
             if (detailUser && detailUser.id === user.id) {
                 setDetailUser(d => ({ ...d, status: newStatus }));
             }
@@ -169,15 +162,12 @@ export default function Khachhang() {
                         </tbody>
                     </table>
                 </div>
-                {/* PHÂN TRANG DẠNG SỐ */}
                 {totalPages > 1 && (
                     <div className="flex justify-center mt-4 gap-1">
                         <button
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}
-                            className="px-3 py-1 border rounded bg-white text-black disabled:opacity-50"
-                        >
-                            &lt;
+                            className="px-3 py-1 border rounded bg-white text-black disabled:opacity-50" >&lt;
                         </button>
                         {Array.from({ length: totalPages }, (_, i) => (
                             <button

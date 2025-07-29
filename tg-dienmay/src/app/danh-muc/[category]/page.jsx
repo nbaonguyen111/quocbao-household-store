@@ -35,7 +35,6 @@ export default function DanhMucPage() {
     if (category) fetchProducts();
   }, [category]);
 
-  // Lấy thông tin danh mục từ Firestore
   useEffect(() => {
     async function fetchCategoryInfo() {
       if (!category) return;
@@ -99,7 +98,6 @@ export default function DanhMucPage() {
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-              {/* Logo bấm về trang chủ */}
               <Link href="/" prefetch={false} scroll={true} replace={true}>
                 <img
                   src={categoryInfo?.logo || "/images/logo1.png"}

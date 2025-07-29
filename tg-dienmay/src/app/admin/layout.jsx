@@ -8,7 +8,7 @@ import Sidebar from "@/components/sidebar";
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
-  const [authorized, setAuthorized] = useState(null); // null: loading, true: ok, false: bị chặn
+  const [authorized, setAuthorized] = useState(null); 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {

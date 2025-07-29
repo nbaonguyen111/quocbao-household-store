@@ -45,8 +45,6 @@ export default function TimKiemPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [smallBannerIdx, setSmallBannerIdx] = useState(0);
-
-  // Tự động chuyển banner nhỏ mỗi 3s
   const nextSlide = useCallback(() => {
     setSmallBannerIdx((prev) => (prev + 2) % smallBanners.length);
   }, []);
@@ -55,12 +53,10 @@ export default function TimKiemPage() {
     return () => clearInterval(timer);
   }, [nextSlide]);
 
-  // Đồng bộ searchTerm với keyword trên URL mỗi khi keyword thay đổi
   useEffect(() => {
     setSearchTerm(keyword);
   }, [keyword]);
 
-  // Lấy dữ liệu từ Firestore
   useEffect(() => {
     async function fetchProducts() {
       setLoading(true);
@@ -80,14 +76,9 @@ export default function TimKiemPage() {
     fetchProducts();
   }, []);
 
-  // Lấy danh sách thương hiệu duy nhất
   const uniqueBrands = Array.from(new Set(products.map((p) => p.brand)));
-
-  // Lọc, sắp xếp, tìm kiếm
   useEffect(() => {
     let filtered = products;
-
-    // Lọc theo từ khóa (không phân biệt dấu)
     if (searchTerm.trim()) {
       const lower = removeVietnameseTones(searchTerm.trim().toLowerCase());
       filtered = filtered.filter(
@@ -96,13 +87,9 @@ export default function TimKiemPage() {
           removeVietnameseTones(p.description?.toLowerCase() || "").includes(lower)
       );
     }
-
-    // Lọc theo thương hiệu
     if (selectedBrand !== "all") {
       filtered = filtered.filter((p) => p.brand === selectedBrand);
     }
-
-    // Sắp xếp
     switch (sortBy) {
       case "hot":
         filtered = filtered.slice().sort((a, b) => Number(b.isHot) - Number(a.isHot));
@@ -124,25 +111,21 @@ export default function TimKiemPage() {
     }
 
     setResults(filtered);
-    setCurrentPage(1); // Reset về trang 1 khi filter/sort thay đổi
+    setCurrentPage(1);
   }, [searchTerm, selectedBrand, sortBy, products]);
 
-  // Phân trang
   const totalPages = Math.ceil(results.length / pageSize);
   const paginatedResults = results.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
-
-  // Xử lý tìm kiếm khi submit form
   const handleSearch = (e) => {
     e.preventDefault();
-    // Đẩy từ khóa lên URL để đồng bộ
     router.push(`?keyword=${encodeURIComponent(searchTerm)}`);
   };
 
-  // Danh mục như hình ảnh
+
   const categories = [
     { label: "Máy Lạnh", href: "/danh-muc/may-lanh", icon: "/images/maylanh.png" },
     { label: "Tivi", href: "/danh-muc/tivi", icon: "/images/tivi.png" },
@@ -162,7 +145,6 @@ export default function TimKiemPage() {
       }}
     >
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        {/* Banner nhỏ chuyển động */}
         <div className="relative w-full max-w-6xl mx-auto mb-6 px-4">
           <div className="grid grid-cols-2 gap-4">
             {[0, 1].map((offset) => {
@@ -179,18 +161,16 @@ export default function TimKiemPage() {
           </div>
         </div>
 
-        {/* Logo + Danh mục + Thanh tìm kiếm cùng hàng */}
         <div
           className="flex items-center gap-6 mb-8 px-2 w-full"
           style={{
-            background: "#21a5f5", // Màu nền xanh nước biển
+            background: "#21a5f5", 
             borderRadius: 16,
             padding: "18px 18px",
             marginBottom: 32,
             boxShadow: "0 2px 12px #1976d211",
           }}
         >
-          {/* Logo về trang chủ */}
           <Link
             href="/"
             className="flex items-center group shrink-0"
@@ -200,9 +180,9 @@ export default function TimKiemPage() {
               src="/images/logo1.png"
               alt="Thế Giới Điện Máy"
               style={{
-                height: 150,         // Chiều cao logo vừa mắt (48-56px tuỳ ý)
+                height: 150,        
                 width: "auto",
-                maxWidth: 160,      // Không quá dài
+                maxWidth: 160,      
                 objectFit: "contain",
                 display: "block",
                 background: "transparent",
@@ -211,7 +191,6 @@ export default function TimKiemPage() {
             />
           </Link>
 
-          {/* Danh mục dropdown */}
           <div className="relative ml-4 shrink-0">
             <button
               className="flex items-center px-4 py-2 rounded-lg font-bold text-lg shadow transition"
@@ -264,7 +243,6 @@ export default function TimKiemPage() {
             )}
           </div>
 
-          {/* Thanh tìm kiếm */}
           <div className="flex-1 flex justify-center">
             <form
               onSubmit={handleSearch}
@@ -303,8 +281,6 @@ export default function TimKiemPage() {
             </form>
           </div>
         </div>
-
-        {/* Bộ lọc và sắp xếp */}
         <div
           style={{
             display: "flex",
@@ -372,7 +348,6 @@ export default function TimKiemPage() {
             </select>
           </div>
         </div>
-        {/* Kết quả */}
         {loading ? (
           <div style={{ textAlign: "center", color: "#1976d2", fontSize: 20, padding: 40 }}>
             Đang tải dữ liệu sản phẩm...
@@ -430,7 +405,6 @@ export default function TimKiemPage() {
                       e.currentTarget.style.transform = "none";
                     }}
                   >
-                    {/* Gắn nhãn nếu có */}
                     {p.isHot && (
                       <span
                         style={{
@@ -514,7 +488,6 @@ export default function TimKiemPage() {
                       {p.name}
                     </h3>
                     <div style={{ color: "#555", fontSize: 15, marginBottom: 4 }}>
-                      {/* Nếu có trường category */}
                       Danh mục:{" "}
                       <Link
                         key={p.id || idx}
@@ -523,7 +496,6 @@ export default function TimKiemPage() {
                         onClick={() => console.log("Đi tới danh mục:", p.category)}
                       >
                         <div>
-                          {/* ...nội dung sản phẩm... */}
                         </div>
                       </Link>
                     </div>
@@ -554,7 +526,6 @@ export default function TimKiemPage() {
                 </Link>
               ))}
             </div>
-            {/* Phân trang */}
             {totalPages > 1 && (
               <div style={{ display: "flex", justifyContent: "center", margin: "32px 0 0" }}>
                 <button
@@ -616,7 +587,6 @@ export default function TimKiemPage() {
         )}
       </div>
 
-      {/* Footer ở cuối trang */}
       <Footer />
     </div>
   );

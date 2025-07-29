@@ -15,17 +15,13 @@ export default function AdminDashboard() {
   const [tab, setTab] = useState("products");
   const [loading, setLoading] = useState(true);
 
-  // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      // Products
       const prodSnap = await getDocs(collection(db, "products"));
       setProducts(prodSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      // Users
       const userSnap = await getDocs(collection(db, "users"));
       setUsers(userSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      // Orders
       const orderSnap = await getDocs(collection(db, "orders"));
       setOrders(orderSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       setLoading(false);
@@ -33,7 +29,6 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
-  // Delete handlers
   const handleDeleteProduct = async (id) => {
     if (confirm("Xóa sản phẩm này?")) {
       await deleteDoc(doc(db, "products", id));
@@ -52,16 +47,10 @@ export default function AdminDashboard() {
       setOrders(orders.filter(o => o.id !== id));
     }
   };
-
-  // Tổng doanh thu
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
-
-  // Top 3 sản phẩm bán chạy (nếu có trường sold hoặc quantitySold)
   const topProducts = [...products]
     .sort((a, b) => (b.sold || 0) - (a.sold || 0))
     .slice(0, 3);
-
-  // Chart data
   const chartData = {
     labels: ["Sản phẩm", "Người dùng", "Đơn hàng"],
     datasets: [
@@ -92,7 +81,6 @@ export default function AdminDashboard() {
         <Link href="/" className="text-white underline hover:text-yellow-300 transition">Về trang chủ</Link>
       </div>
       <div className="max-w-6xl mx-auto mt-8 bg-white rounded-xl shadow-lg p-8">
-        {/* Thẻ thống kê nhanh */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="flex items-center bg-blue-100 rounded-lg p-5 shadow hover:scale-105 transition">
             <div className="bg-blue-600 text-white rounded-full p-3 mr-4">
@@ -131,7 +119,6 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
-        {/* Biểu đồ tổng quan */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div className="bg-blue-50 rounded-lg p-4 shadow">
             <h2 className="text-lg font-semibold mb-2 text-blue-700">Biểu đồ cột tổng quan</h2>
@@ -142,7 +129,6 @@ export default function AdminDashboard() {
             <Pie data={pieData} options={{ responsive: true, plugins: { legend: { position: "bottom" } } }} height={120} />
           </div>
         </div>
-        {/* Top sản phẩm bán chạy */}
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-2 text-pink-700 flex items-center gap-2">
             <FaBoxOpen /> Top 3 sản phẩm bán chạy
@@ -160,7 +146,6 @@ export default function AdminDashboard() {
             {topProducts.length === 0 && <div className="text-gray-500 col-span-3">Chưa có dữ liệu bán chạy.</div>}
           </div>
         </div>
-        {/* Tabs */}
         <div className="flex gap-4 mb-6">
           <button
             className={`px-4 py-2 rounded font-semibold shadow ${tab === "products" ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-blue-100"}`}
