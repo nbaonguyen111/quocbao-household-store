@@ -6,29 +6,25 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Navbar from '../../components/navbar'
 import Footer from '../../components/footer'
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
-import { useRouter } from "next/navigation"; // Nếu muốn redirect về trang login
+import { useRouter } from "next/navigation"; 
 
 export default function Giohang() {
   const [cartItems, setCartItems] = useState([]);
   const [userId, setUserId] = useState(null);
   const router = useRouter();
 
-  // Theo dõi đăng nhập
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserId(user.uid);
       } else {
-        // Nếu chưa đăng nhập → có thể điều hướng về trang login hoặc hiển thị cảnh báo
-        router.push("/dang-nhap"); // hoặc setUserId("guest")
+        router.push("/dang-nhap");
       }
     });
 
     return () => unsubscribe();
   }, [router]);
-
-  // Lấy danh sách giỏ hàng từ Firebase
   useEffect(() => {
     const fetchCart = async () => {
       if (!userId) return;

@@ -24,6 +24,10 @@ const Sidebar = () => {
           </li>
           <li className="flex items-center space-x-2 hover:text-yellow-400 cursor-pointer">
             <User size={20} />
+           <a href="/admin/don-hang">Đơn Hàng</a>
+          </li>
+          <li className="flex items-center space-x-2 hover:text-yellow-400 cursor-pointer">
+            <User size={20} />
            <a href="/admin/san-pham">Sản phẩm</a>
           </li>
        

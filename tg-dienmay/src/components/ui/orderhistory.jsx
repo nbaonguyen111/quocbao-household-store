@@ -2,6 +2,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/firebase/firebase';
 import { useState, useEffect } from 'react';
 import { Timestamp } from "firebase/firestore";
+import { getStatusVN } from '@/untils/untils';
 
 const OrderHistory = ({ userId }) => {
   const [orders, setOrders] = useState([]);
@@ -29,7 +30,9 @@ const OrderHistory = ({ userId }) => {
             ? order.createdAt.toDate().toLocaleString("vi-VN")
             : "Không rõ"}
           </p>
-          {console.log(order.createdAt)}
+          {/* {console.log(order.createdAt)}
+           */}
+           <p><strong>Tình trạng:</strong> {getStatusVN(order.status)}</p>
           <p><strong>Tổng tiền:</strong> {order.total.toLocaleString()}₫</p>
         </div>
 

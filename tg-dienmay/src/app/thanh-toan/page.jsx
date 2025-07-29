@@ -15,7 +15,6 @@ export default function Thanhtoan() {
     const [receiverName, setReceiverName] = useState("");
     const [receiverPhone, setReceiverPhone] = useState("");
     const router = useRouter();
-
     const handleCheckout = async () => {
         if (!receiverName || !receiverPhone || !shippingAddress || cartItems.length === 0) {
             toast.error("Vui lòng nhập đầy đủ thông tin và có sản phẩm trong giỏ!");
@@ -29,6 +28,7 @@ export default function Thanhtoan() {
                 shippingAddress,
                 items: cartItems,
                 total: totalPrice,
+                status: "pending",
                 createdAt: serverTimestamp(),
             });
             setCartItems([]);
