@@ -11,6 +11,15 @@ import {
     doc,
     query,
 } from "firebase/firestore";
+import {
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+  } from "@/components/ui/dialog";
+  import OrderHistory from "@/components/ui/orderhistory";
 
 export default function Khachhang() {
     const [data, setData] = useState([]);
@@ -233,6 +242,22 @@ export default function Khachhang() {
                                 <div>
                                     <span className="font-semibold">Trạng thái:</span> <span className={`px-2 py-1 rounded text-xs font-semibold ${detailUser.status === 'locked' ? 'bg-red-200 text-red-700' : 'bg-green-200 text-green-700'}`}>{detailUser.status === 'locked' ? 'Khóa' : 'Hoạt động'}</span>
                                 </div>
+                                <Dialog>
+                <DialogTrigger asChild>
+                  <button className="text-gray-700 hover:text-gray-900 underline">
+                    Xem lịch sử đơn hàng
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Lịch sử đơn hàng</DialogTitle>
+                    <DialogDescription>
+                      Dưới đây là lịch sử đơn hàng của bạn
+                    </DialogDescription>
+                  </DialogHeader>     
+                  {detailUser?.id && <OrderHistory userId={detailUser.id} />}
+                </DialogContent>
+              </Dialog>
                                 <div>
                                     <span className="font-semibold">Ngày tạo tài khoản:</span>{' '}
                                     {detailUser.createdAt?.toDate().toLocaleString()}
