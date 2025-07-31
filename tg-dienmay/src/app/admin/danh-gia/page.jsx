@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { db } from "@/firebase/firebase";
-import { collection, getDocs, doc, deleteDoc, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, deleteDoc, getDoc, updateDoc } from "firebase/firestore";
 
 export default function Danhgia() {
     const [allReviews, setAllReviews] = useState([]);
@@ -37,6 +37,8 @@ export default function Danhgia() {
                     reviewId: reviewDoc.id,
                     productName: productDoc.data().name,
                     userName,
+                    hidden: reviewData.hidden ?? false,
+                    reported: reviewData.reported ?? false,
                 });
             }
         }
@@ -49,11 +51,28 @@ export default function Danhgia() {
         ? allReviews
         : allReviews.filter(r => (r.rating ?? 0) === filterStar);
 
+    // Xoá đánh giá
     const handleDelete = async (productId, reviewId) => {
         if (window.confirm("Bạn có chắc muốn xoá đánh giá này?")) {
             await deleteDoc(doc(db, "products", productId, "reviews", reviewId));
             fetchAllReviews();
         }
+    };
+
+    // Ẩn/hiện đánh giá
+    const handleToggleHidden = async (productId, reviewId, current) => {
+        await updateDoc(doc(db, "products", productId, "reviews", reviewId), {
+            hidden: !current,
+        });
+        fetchAllReviews();
+    };
+
+    // Đánh dấu báo cáo bình luận xấu
+    const handleReport = async (productId, reviewId, current) => {
+        await updateDoc(doc(db, "products", productId, "reviews", reviewId), {
+            reported: !current,
+        });
+        fetchAllReviews();
     };
 
     return (
@@ -87,17 +106,18 @@ export default function Danhgia() {
                                 <th className="border px-2 py-2">Số sao</th>
                                 <th className="border px-2 py-2">Nội dung</th>
                                 <th className="border px-2 py-2">Thời gian</th>
+                                <th className="border px-2 py-2">Trạng thái</th>
                                 <th className="border px-2 py-2">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredReviews.length === 0 && (
                                 <tr>
-                                    <td colSpan={6} className="text-center py-4 text-gray-500">Không có đánh giá phù hợp.</td>
+                                    <td colSpan={7} className="text-center py-4 text-gray-500">Không có đánh giá phù hợp.</td>
                                 </tr>
                             )}
                             {filteredReviews.map((r, idx) => (
-                                <tr key={idx}>
+                                <tr key={idx} className={r.hidden ? "bg-gray-100 opacity-60" : ""}>
                                     <td className="border px-2 py-2">{r.productName}</td>
                                     <td className="border px-2 py-2">{r.userName}</td>
                                     <td className="border px-2 py-2">
@@ -119,6 +139,28 @@ export default function Danhgia() {
                                     <td className="border px-2 py-2">{r.text}</td>
                                     <td className="border px-2 py-2">{r.date}</td>
                                     <td className="border px-2 py-2">
+                                        {r.hidden ? (
+                                            <span className="text-red-500 font-semibold">Đã ẩn</span>
+                                        ) : (
+                                            <span className="text-green-600 font-semibold">Hiện</span>
+                                        )}
+                                        {r.reported && (
+                                            <div className="text-xs text-orange-600 font-semibold">Bị báo cáo</div>
+                                        )}
+                                    </td>
+                                    <td className="border px-2 py-2 flex flex-col gap-1">
+                                        <button
+                                            className={`px-2 py-1 rounded ${r.hidden ? "bg-green-500" : "bg-gray-400"} text-white`}
+                                            onClick={() => handleToggleHidden(r.productId, r.reviewId, r.hidden)}
+                                        >
+                                            {r.hidden ? "Hiện" : "Ẩn"}
+                                        </button>
+                                        <button
+                                            className={`px-2 py-1 rounded ${r.reported ? "bg-orange-600" : "bg-orange-400"} text-white`}
+                                            onClick={() => handleReport(r.productId, r.reviewId, r.reported)}
+                                        >
+                                            {r.reported ? "Bỏ báo cáo" : "Báo xấu"}
+                                        </button>
                                         <button
                                             className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                                             onClick={() => handleDelete(r.productId, r.reviewId)}
