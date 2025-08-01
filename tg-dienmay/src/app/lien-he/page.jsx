@@ -25,9 +25,7 @@ export default function LienHePage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col">
       <Navbar />
       <div className="max-w-2xl mx-auto my-10 bg-white rounded-lg shadow-lg p-8 flex-1">
-        <a href="/" className="flex items-center space-x-2">
-          <img src="/images/logo1.png" alt="Logo" className="h-32 w-32" />
-        </a>
+        
         <h1 className="text-3xl font-bold text-blue-700 mb-2">Liên hệ & Hỗ trợ</h1>
         <p className="mb-6 text-gray-600">
           Nếu bạn có thắc mắc, góp ý hoặc cần hỗ trợ, vui lòng điền thông tin vào form dưới đây. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!

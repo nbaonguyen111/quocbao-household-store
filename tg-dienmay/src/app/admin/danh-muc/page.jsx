@@ -12,13 +12,15 @@ export default function Danhmuc() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
+  // Fetch categories
+  const fetchCategories = async () => {
+    setLoading(true);
+    const snap = await getDocs(collection(db, "categories"));
+    setCategories(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchCategories = async () => {
-      setLoading(true);
-      const snap = await getDocs(collection(db, "categories"));
-      setCategories(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setLoading(false);
-    };
     fetchCategories();
   }, []);
 
@@ -31,16 +33,16 @@ export default function Danhmuc() {
   const handleAdd = async (e) => {
     e.preventDefault();
     if (!name.trim()) return;
-    const docRef = await addDoc(collection(db, "categories"), { name: name.trim() });
-    setCategories([...categories, { id: docRef.id, name: name.trim() }]);
+    await addDoc(collection(db, "categories"), { name: name.trim() });
     setName("");
     setMessage("Thêm danh mục thành công!");
+    fetchCategories(); // Refetch để tránh trùng key
   };
   const handleDelete = async (id) => {
     if (!confirm("Bạn chắc chắn muốn xóa danh mục này?")) return;
     await deleteDoc(doc(db, "categories", id));
-    setCategories(categories.filter(c => c.id !== id));
     setMessage("Đã xóa danh mục!");
+    fetchCategories(); // Refetch để tránh trùng key
   };
 
   const handleEdit = (id, name) => {
@@ -51,10 +53,10 @@ export default function Danhmuc() {
     e.preventDefault();
     if (!editingName.trim()) return;
     await updateDoc(doc(db, "categories", editingId), { name: editingName.trim() });
-    setCategories(categories.map(c => c.id === editingId ? { ...c, name: editingName.trim() } : c));
     setEditingId(null);
     setEditingName("");
     setMessage("Cập nhật thành công!");
+    fetchCategories(); // Refetch để tránh trùng key
   };
   const badgeColors = [
     "bg-blue-200 text-blue-700",
@@ -64,6 +66,11 @@ export default function Danhmuc() {
     "bg-purple-200 text-purple-700",
     "bg-orange-200 text-orange-700",
   ];
+
+  // Lọc trùng id (chỉ giữ lại 1 document cho mỗi id)
+  const uniqueCategories = Array.from(
+    new Map(categories.map(item => [item.id, item])).values()
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-8">
@@ -111,7 +118,7 @@ export default function Danhmuc() {
               </tr>
             </thead>
             <tbody>
-              {categories.map((c, idx) => (
+              {uniqueCategories.map((c, idx) => (
                 <tr key={c.id} className="hover:bg-blue-50 transition">
                   <td className="p-2 border flex items-center gap-2">
                     <span className={`px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${badgeColors[idx % badgeColors.length]}`}>
@@ -149,4 +156,3 @@ export default function Danhmuc() {
     </div>
   );
 }
-
