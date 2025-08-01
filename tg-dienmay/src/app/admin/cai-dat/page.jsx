@@ -53,7 +53,7 @@ export default function Caidat() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-300 p-8">
-      <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
+      <div className="max-w-xl mx-auto bg-blue-900 rounded-2xl shadow-2xl p-8">
         <h1 className="text-3xl font-bold text-blue-700 mb-6 flex items-center gap-3">
           <FaCog className="text-blue-500" /> Cài đặt website
         </h1>
