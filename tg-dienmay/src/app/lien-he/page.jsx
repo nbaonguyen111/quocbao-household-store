@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/firebase/firebase";
 
 export default function LienHePage() {
   const [form, setForm] = useState({
@@ -16,9 +18,13 @@ export default function LienHePage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Xử lý gửi form ở đây (gửi email, lưu vào DB, v.v.)
+    // Lưu vào Firestore collection "contacts"
+    await addDoc(collection(db, "contacts"), {
+      ...form,
+      createdAt: serverTimestamp(),
+    });
     setSubmitted(true);
   };
 
