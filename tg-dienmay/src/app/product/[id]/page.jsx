@@ -32,6 +32,7 @@ export default function ProductDetail() {
     });
     return () => unsubscribe();
   }, []);
+
   useEffect(() => {
     async function fetchProduct() {
       if (!id) return;
@@ -56,8 +57,8 @@ export default function ProductDetail() {
 
   useEffect(() => {
     const now = new Date();
-    const start = new Date(now.getTime() + 2 * 60 * 60 * 1000); // +2h
-    const end = new Date(now.getTime() + 4 * 60 * 60 * 1000);   // +4h
+    const start = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+    const end = new Date(now.getTime() + 4 * 60 * 60 * 1000);
     const format = (d) => d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
     setDeliveryTime(`${format(start)} - ${format(end)} hôm nay (${now.getDate().toString().padStart(2, "0")}/${(now.getMonth() + 1).toString().padStart(2, "0")})`);
   }, []);
@@ -100,7 +101,7 @@ export default function ProductDetail() {
        userName,
         date: new Date().toLocaleString("vi-VN"),
         rating,
-        hidden: false, // Đánh giá mới luôn hiện
+        hidden: false,
         reported: false,
       });
       setReview("");
@@ -134,7 +135,6 @@ export default function ProductDetail() {
               </div>
             </div>
             <div className="bg-white border-2 border-orange-400 rounded-lg p-4 w-80 flex flex-col gap-4 shadow">
-              {/* Số lượng */}
               <div>
                 <span className="font-semibold">Số lượng:</span>
                 <div className="flex items-center mt-2">
@@ -149,7 +149,6 @@ export default function ProductDetail() {
                   >+</button>
                 </div>
               </div>
-              {/* Nút mua */}
               <div className="flex gap-3">
                 <button
                   className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-3 py-2 rounded flex-1"
@@ -292,7 +291,10 @@ export default function ProductDetail() {
                 <div className="text-gray-500">Chưa có đánh giá nào.</div>
               )}
               {reviews.map((r, idx) => (
-                <div key={idx} className="border-b py-2">
+                <div
+                  key={idx}
+                  className={`border-b py-2 ${r.reported ? "border border-red-500 bg-red-50" : ""}`}
+                >
                   <div className="flex items-center gap-2">
                     {[1,2,3,4,5].map(star => (
                       <svg key={star} width="18" height="18" viewBox="0 0 24 24"
@@ -308,7 +310,12 @@ export default function ProductDetail() {
                     <span className="text-xs text-gray-500">{ratingLabels[r.rating-1]}</span>
                   </div>
                   <div className="text-sm text-gray-700">{r.text}</div>
-                  <div className="text-xs text-gray-400">{r.userName} - {r.date}</div>
+                  <div className="text-xs text-gray-400">{r.userId} - {r.date}</div>
+                  {r.reported && (
+                    <div className="text-red-600 font-semibold mt-1">
+                      Bình luận này vi phạm
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

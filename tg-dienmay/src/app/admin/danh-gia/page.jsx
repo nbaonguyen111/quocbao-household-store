@@ -23,7 +23,7 @@ export default function Danhgia() {
             const reviewsSnap = await getDocs(reviewsCol);
             for (const reviewDoc of reviewsSnap.docs) {
                 const reviewData = reviewDoc.data();
-                let userName = reviewData.userId;
+                let userName = reviewData.userName;
                 if (reviewData.userId && reviewData.userId !== "Khách" && reviewData.userId !== "demoUser") {
                     const userRef = doc(db, "users", reviewData.userId);
                     const userSnap = await getDoc(userRef);
@@ -76,7 +76,7 @@ export default function Danhgia() {
     };
 
     return (
-        <div className="p-8 min-h-screen bg-gray-100">
+        <div className="p-8 min-h-screen bg-blue-900">
             <h1 className="text-2xl font-bold mb-6">Quản lý đánh giá sản phẩm</h1>
             <div className="mb-4 flex items-center gap-2">
                 <span>Lọc theo số sao:</span>
@@ -97,10 +97,10 @@ export default function Danhgia() {
             {loading ? (
                 <div>Đang tải dữ liệu...</div>
             ) : (
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-blue-900 rounded-lg shadow p-6">
                     <table className="w-full text-sm border">
                         <thead>
-                            <tr className="bg-gray-200">
+                            <tr className="bg-blue-900">
                                 <th className="border px-2 py-2">Sản phẩm</th>
                                 <th className="border px-2 py-2">Người đánh giá</th>
                                 <th className="border px-2 py-2">Số sao</th>
