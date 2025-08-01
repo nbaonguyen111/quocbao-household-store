@@ -6,10 +6,8 @@ import { useRouter } from "next/navigation";
 import { auth, db } from "@/firebase/firebase";
 import Sidebar from "@/components/sidebar";
 
-// Tạo context cho phân quyền
 export const AdminContext = createContext();
 
-// Hook để sử dụng context
 export const useAdmin = () => {
   const context = useContext(AdminContext);
   if (!context) {
@@ -18,7 +16,6 @@ export const useAdmin = () => {
   return context;
 };
 
-// Hàm kiểm tra quyền
 const checkPermission = (userRole, requiredRole) => {
   const roleHierarchy = {
     'superadmin': 3,
@@ -43,11 +40,8 @@ export default function AdminLayout({ children }) {
       }
 
       try {
-        // Kiểm tra trong collection users trước
         let userDoc = await getDoc(doc(db, "users", user.uid));
         let userData = userDoc.data();
-
-        // Nếu không có trong users, kiểm tra trong adminUsers
         if (!userData) {
           userDoc = await getDoc(doc(db, "adminUsers", user.uid));
           userData = userDoc.data();
@@ -55,12 +49,8 @@ export default function AdminLayout({ children }) {
 
         if (userData) {
           const role = userData.role;
-
-          // Kiểm tra quyền truy cập admin
           if (role === 'superadmin' || role === 'admin' || role === 'moderator') {
             setCurrentUser({ ...userData, uid: user.uid });
-
-            // Thiết lập permissions dựa trên role
             const userPermissions = {
               canManageProducts: checkPermission(role, 'moderator'),
               canManageUsers: checkPermission(role, 'admin'),

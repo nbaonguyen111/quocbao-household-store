@@ -24,7 +24,6 @@ export default function ProductDetail() {
 
   const ratingLabels = ["Rất tệ", "Tệ", "Tạm ổn", "Tốt", "Rất tốt"];
 
-  // Lấy userId từ Firebase Auth
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -33,8 +32,6 @@ export default function ProductDetail() {
     });
     return () => unsubscribe();
   }, []);
-
-  // Lấy thông tin sản phẩm
   useEffect(() => {
     async function fetchProduct() {
       if (!id) return;
@@ -47,19 +44,16 @@ export default function ProductDetail() {
     fetchProduct();
   }, [id]);
 
-  // Lấy đánh giá từ Firestore khi load trang
   useEffect(() => {
     async function fetchReviews() {
       if (!id) return;
       const reviewsCol = collection(db, "products", id, "reviews");
       const snapshot = await getDocs(reviewsCol);
-      // Chỉ lấy đánh giá chưa bị ẩn
       setReviews(snapshot.docs.map(doc => doc.data()).filter(r => !r.hidden));
     }
     fetchReviews();
   }, [id]);
 
-  // Cập nhật thời gian giao hàng thực tế
   useEffect(() => {
     const now = new Date();
     const start = new Date(now.getTime() + 2 * 60 * 60 * 1000); // +2h
@@ -112,7 +106,6 @@ export default function ProductDetail() {
       setReview("");
       setRating(0);
       toast.success("Gửi đánh giá thành công!");
-      // Reload lại danh sách đánh giá, chỉ lấy đánh giá chưa bị ẩn
       const reviewsCol = collection(db, "products", id, "reviews");
       const snapshot = await getDocs(reviewsCol);
       setReviews(snapshot.docs.map(doc => doc.data()).filter(r => !r.hidden));
@@ -168,7 +161,6 @@ export default function ProductDetail() {
                   Mua ngay
                 </button>
               </div>
-              {/* Thông tin vận chuyển */}
               <div className="bg-gray-50 rounded p-3 text-sm border">
                 <div className="font-semibold mb-1">Thông tin vận chuyển</div>
                 <div className="mb-1 flex items-center gap-2">
@@ -190,7 +182,6 @@ export default function ProductDetail() {
                 </div>
               </div>
             </div>
-            {/* Modal đổi địa chỉ */}
             {showAddressModal && (
               <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                 <div className="bg-white rounded-lg p-6 w-[400px] shadow-lg relative">
@@ -254,11 +245,9 @@ export default function ProductDetail() {
               </tbody>
             </table>
           </div>
-          {/* Đánh giá khách hàng */}
           <div className="bg-white p-6 rounded-lg shadow mt-4 w-[560px]">
             <h3 className="font-semibold text-lg mb-3 border-b pb-2">Đánh giá của khách hàng</h3>
             <div className="mb-4">
-              {/* Đánh giá bằng sao */}
               <div className="flex items-center gap-3 mb-2 justify-center">
                 {[1,2,3,4,5].map((star) => (
                   <span key={star} className="flex flex-col items-center">

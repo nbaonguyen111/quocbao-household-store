@@ -163,9 +163,6 @@ export default function Navbar() {
                   <a href="/tai-khoan" className="block px-4 py-2 hover:bg-gray-100">
                     Thông tin tài khoản
                   </a>
-                  <a href="/lich-su-don-hang" className="block px-4 py-2 hover:bg-gray-100">
-                    Lịch sử đơn hàng
-                  </a>
                   <button
                     onClick={handleLogout}
                     disabled={loading}

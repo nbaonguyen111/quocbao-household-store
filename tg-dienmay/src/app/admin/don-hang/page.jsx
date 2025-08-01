@@ -100,38 +100,38 @@ export default function DonHang() {
     }
 
     return (
-        <div className="p-6">
+        <div className="p-6 bg-blue-900">
             <h1 className="text-2xl font-bold mb-6">Quản lý đơn hàng</h1>
             <div className="mb-4">
                 <label className="mr-2">Lọc theo trạng thái:</label>
                 <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="border rounded px-3 py-1"
+                    className="border rounded px-3 py-1 "
                 >
-                    <option value="all">Tất cả</option>
-                    <option value="pending">Chờ thanh toán</option>
-                    <option value="completed">Đã thanh toán</option>
-                    <option value="uncompleted">Chưa thanh toán</option>
+                    <option className="text-black" value="all">Tất cả</option>
+                    <option className="text-black" value="pending">Chờ thanh toán</option>
+                    <option className="text-black" value="completed">Đã thanh toán</option>
+                    <option className="text-black" value="uncompleted">Chưa thanh toán</option>
 
                 </select>
             </div>
             <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border rounded-lg">
+                <table className="min-w-full bg-blue-900 rounded-lg">
                     <thead>
-                        <tr className="bg-gray-50">
-                            <th className="border px-4 py-2">Mã đơn hàng</th>
-                            <th className="border px-4 py-2">Khách hàng</th>
-                            <th className="border px-4 py-2">Số điện thoại</th>
-                            <th className="border px-4 py-2">Tổng tiền</th>
-                            <th className="border px-4 py-2">Trạng thái</th>
-                            <th className="border px-4 py-2">Ngày đặt</th>
-                            <th className="border px-4 py-2">Thao tác</th>
+                        <tr className="bg-blue-900">
+                            <th className=" px-4 py-2">Mã đơn hàng</th>
+                            <th className=" px-4 py-2">Khách hàng</th>
+                            <th className=" px-4 py-2">Số điện thoại</th>
+                            <th className=" px-4 py-2">Tổng tiền</th>
+                            <th className=" px-4 py-2">Trạng thái</th>
+                            <th className=" px-4 py-2">Ngày đặt</th>
+                            <th className=" px-4 py-2">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         {paginatedOrders.map((order) => (
-                            <tr key={order.id} className="hover:bg-gray-50">
+                            <tr key={order.id} className="hover:bg-blue-300">
                                 <td className="border px-4 py-2 text-center">{order.id.slice(-8)}</td>
                                 <td className="border px-4 py-2">{order.receiverName}</td>
                                 <td className="border px-4 py-2">{order.receiverPhone}</td>
@@ -158,9 +158,9 @@ export default function DonHang() {
                                             onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
                                             disabled={updatingStatus === order.id}
                                         >
-                                            <option value="pending">Chờ thanh toán</option>
-                                            <option value="completed">Đã thanh toán</option>
-                                            <option value="uncompleted">Chưa thanh toán</option>
+                                            <option className="text-black" value="pending">Chờ thanh toán</option>
+                                            <option className="text-black" value="completed">Đã thanh toán</option>
+                                            <option className="text-black" value="uncompleted">Chưa thanh toán</option>
 
                                         </select>
                                     </div>

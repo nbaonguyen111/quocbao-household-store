@@ -140,7 +140,7 @@ export default function Baocao() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-8">
-      <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-8">
+      <div className="max-w-5xl mx-auto bg-blue-900 rounded-xl shadow-lg p-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-blue-700 flex items-center gap-2">
             <FaChartPie className="text-blue-500" /> Báo cáo bán hàng
@@ -245,5 +245,6 @@ export default function Baocao() {
         </div>
       </div>
     </div>
+    
   );
 }

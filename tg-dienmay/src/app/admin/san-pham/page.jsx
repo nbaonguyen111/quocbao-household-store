@@ -20,9 +20,8 @@ export default function ProductAdminPage() {
         description: "",
     });
     const [editId, setEditId] = useState(null);
-    const [message, setMessage] = useState(""); // Thêm state cho thông báo
+    const [message, setMessage] = useState(""); 
 
-    // Fetch products
     const fetchProducts = async () => {
         const snap = await getDocs(collection(db, "products"));
         setProducts(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
@@ -32,12 +31,9 @@ export default function ProductAdminPage() {
         fetchProducts();
     }, []);
 
-    // Handle form change
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
-
-    // Add or update product
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (editId) {
@@ -62,10 +58,8 @@ export default function ProductAdminPage() {
         });
         setEditId(null);
         fetchProducts();
-        setTimeout(() => setMessage(""), 2000); // Ẩn thông báo sau 2 giây
+        setTimeout(() => setMessage(""), 2000); 
     };
-
-    // Edit product
     const handleEdit = (product) => {
         setForm({
             name: product.name || "",
@@ -77,7 +71,6 @@ export default function ProductAdminPage() {
         setEditId(product.id);
     };
 
-    // Delete product
     const handleDelete = async (id) => {
         if (window.confirm("Bạn có chắc muốn xoá sản phẩm này?")) {
             await deleteDoc(doc(db, "products", id));
@@ -89,15 +82,13 @@ export default function ProductAdminPage() {
 
 
     return (
-        <div className="bg-white p-6 rounded shadow w-full h-full text-black"   >
+        <div className="bg-blue-900 p-6 rounded shadow w-full h-full text-white"   >
             <h2 className="text-2xl font-bold mb-4">Product List</h2>
-            {/* Hiển thị thông báo */}
             {message && (
                 <div className="mb-4 px-4 py-2 bg-green-100 text-green-700 rounded border border-green-300 transition">
                     {message}
                 </div>
             )}
-            {/* Form */}
             <form onSubmit={handleSubmit} className="mb-6 flex gap-4 flex-wrap items-end">
                 <input
                     name="name"
@@ -163,9 +154,8 @@ export default function ProductAdminPage() {
                     </button>
                 )}
             </form>
-            {/* Table */}
             <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border rounded">
+                <table className="min-w-full bg-blue-900 border rounded">
                     <thead>
                         <tr>
                             <th className="border px-2 py-1">#ID</th>

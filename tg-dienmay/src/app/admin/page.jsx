@@ -29,24 +29,6 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
-  const handleDeleteProduct = async (id) => {
-    if (confirm("Xóa sản phẩm này?")) {
-      await deleteDoc(doc(db, "products", id));
-      setProducts(products.filter(p => p.id !== id));
-    }
-  };
-  const handleDeleteUser = async (id) => {
-    if (confirm("Xóa người dùng này?")) {
-      await deleteDoc(doc(db, "users", id));
-      setUsers(users.filter(u => u.id !== id));
-    }
-  };
-  const handleDeleteOrder = async (id) => {
-    if (confirm("Xóa đơn hàng này?")) {
-      await deleteDoc(doc(db, "orders", id));
-      setOrders(orders.filter(o => o.id !== id));
-    }
-  };
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
   const topProducts = [...products]
     .sort((a, b) => (b.sold || 0) - (a.sold || 0))
@@ -74,13 +56,13 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-300">
-      <div className="bg-blue-700 py-4 px-8 flex items-center justify-between shadow">
+      <div className="bg-blue-900 py-4 px-8 flex items-center justify-between shadow">
         <h1 className="text-2xl text-white font-bold tracking-wide flex items-center gap-2">
           <FaCrown className="text-yellow-300" /> Admin Dashboard
         </h1>
         <Link href="/" className="text-white underline hover:text-yellow-300 transition">Về trang chủ</Link>
       </div>
-      <div className="max-w-6xl mx-auto mt-8 bg-white rounded-xl shadow-lg p-8">
+      <div className="max-w-6xl mx-auto mt-8 bg-blue-900 rounded-xl shadow-lg p-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="flex items-center bg-blue-100 rounded-lg p-5 shadow hover:scale-105 transition">
             <div className="bg-blue-600 text-white rounded-full p-3 mr-4">
@@ -114,10 +96,13 @@ export default function AdminDashboard() {
               <FaCrown size={28} />
             </div>
             <div>
-              <div className="text-2xl font-bold text-purple-700">{totalRevenue.toLocaleString()}₫</div>
+              <div className="text-base font-bold text-purple-700">
+                {totalRevenue.toLocaleString()}₫
+              </div>
               <div className="text-purple-700 font-semibold">Tổng doanh thu</div>
             </div>
           </div>
+
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div className="bg-blue-50 rounded-lg p-4 shadow">
@@ -129,7 +114,7 @@ export default function AdminDashboard() {
             <Pie data={pieData} options={{ responsive: true, plugins: { legend: { position: "bottom" } } }} height={120} />
           </div>
         </div>
-        <div className="mb-8">
+        {/* <div className="mb-8">
           <h2 className="text-lg font-semibold mb-2 text-pink-700 flex items-center gap-2">
             <FaBoxOpen /> Top 3 sản phẩm bán chạy
           </h2>
@@ -145,22 +130,22 @@ export default function AdminDashboard() {
             ))}
             {topProducts.length === 0 && <div className="text-gray-500 col-span-3">Chưa có dữ liệu bán chạy.</div>}
           </div>
-        </div>
-        <div className="flex gap-4 mb-6">
+        </div> */}
+        <div className="flex gap-4  mb-6">
           <button
-            className={`px-4 py-2 rounded font-semibold shadow ${tab === "products" ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-blue-100"}`}
+            className={`px-4 py-2 rounded font-semibold shadow ${tab === "products" ? "bg-blue-600 text-white" : "bg-white text-black hover:bg-blue-100"}`}
             onClick={() => setTab("products")}
           >
             Sản phẩm
           </button>
           <button
-            className={`px-4 py-2 rounded font-semibold shadow ${tab === "users" ? "bg-green-600 text-white" : "bg-gray-200 hover:bg-green-100"}`}
+            className={`px-4 py-2 rounded font-semibold shadow ${tab === "users" ? "bg-green-600 text-white" : "bg-white text-black hover:bg-green-100"}`}
             onClick={() => setTab("users")}
           >
             Người dùng
           </button>
           <button
-            className={`px-4 py-2 rounded font-semibold shadow ${tab === "orders" ? "bg-yellow-500 text-white" : "bg-gray-200 hover:bg-yellow-100"}`}
+            className={`px-4 py-2 rounded font-semibold shadow ${tab === "orders" ? "bg-yellow-500 text-white" : "bg-white text-black hover:bg-yellow-100"}`}
             onClick={() => setTab("orders")}
           >
             Đơn hàng
@@ -174,17 +159,14 @@ export default function AdminDashboard() {
               <div>
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-bold">Danh sách sản phẩm</h2>
-                  <Link href="/admin/them-san-pham" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow">+ Thêm sản phẩm</Link>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="min-w-full border text-sm rounded-lg overflow-hidden shadow">
                     <thead>
-                      <tr className="bg-blue-100">
+                      <tr className="bg-blue-900">
                         <th className="p-2 border">Tên</th>
                         <th className="p-2 border">Giá</th>
                         <th className="p-2 border">Danh mục</th>
-                        <th className="p-2 border">Hình ảnh</th>
-                        <th className="p-2 border">Thao tác</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -193,13 +175,6 @@ export default function AdminDashboard() {
                           <td className="p-2 border">{p.name}</td>
                           <td className="p-2 border">{p.price?.toLocaleString()}₫</td>
                           <td className="p-2 border">{p.category}</td>
-                          <td className="p-2 border">
-                            {p.image && <img src={p.image} alt={p.name} className="h-12 w-12 object-cover rounded" />}
-                          </td>
-                          <td className="p-2 border">
-                            <Link href={`/admin/sua-san-pham/${p.id}`} className="text-blue-600 hover:underline mr-2">Sửa</Link>
-                            <button onClick={() => handleDeleteProduct(p.id)} className="text-red-600 hover:underline">Xóa</button>
-                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -210,26 +185,23 @@ export default function AdminDashboard() {
             )}
             {tab === "users" && (
               <div>
-                <h2 className="text-xl font-bold mb-4">Danh sách người dùng</h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold ">Danh sách người dùng</h2>
+                </div>
                 <div className="overflow-x-auto">
                   <table className="min-w-full border text-sm rounded-lg overflow-hidden shadow">
                     <thead>
-                      <tr className="bg-green-100">
+                      <tr className="bg-blue-900">
                         <th className="p-2 border">Tên</th>
                         <th className="p-2 border">Email</th>
                         <th className="p-2 border">Vai trò</th>
-                        <th className="p-2 border">Thao tác</th>
+
                       </tr>
                     </thead>
                     <tbody>
                       {users.map((u) => (
                         <tr key={u.id} className="hover:bg-green-50 transition">
-                          <td className="p-2 border flex items-center gap-2">
-                            {u.avatar ? (
-                              <img src={u.avatar} alt={u.name} className="w-7 h-7 rounded-full" />
-                            ) : (
-                              <FaUserCircle className="w-7 h-7 text-gray-400" />
-                            )}
+                          <td className="p-2 border">
                             {u.name || "Chưa đặt tên"}
                           </td>
                           <td className="p-2 border">{u.email}</td>
@@ -239,9 +211,9 @@ export default function AdminDashboard() {
                               {u.role || "user"}
                             </span>
                           </td>
-                          <td className="p-2 border">
+                          {/* <td className="p-2 border">
                             <button onClick={() => handleDeleteUser(u.id)} className="text-red-600 hover:underline">Xóa</button>
-                          </td>
+                          </td> */}
                         </tr>
                       ))}
                     </tbody>
@@ -249,6 +221,7 @@ export default function AdminDashboard() {
                   {users.length === 0 && <div className="text-center py-4 text-gray-500">Chưa có người dùng.</div>}
                 </div>
               </div>
+
             )}
             {tab === "orders" && (
               <div>
@@ -256,31 +229,28 @@ export default function AdminDashboard() {
                 <div className="overflow-x-auto">
                   <table className="min-w-full border text-sm rounded-lg overflow-hidden shadow">
                     <thead>
-                      <tr className="bg-yellow-100">
+                      <tr className="bg-blue-900">
                         <th className="p-2 border">Mã đơn</th>
                         <th className="p-2 border">Khách hàng</th>
                         <th className="p-2 border">Tổng tiền</th>
                         <th className="p-2 border">Trạng thái</th>
-                        <th className="p-2 border">Thao tác</th>
                       </tr>
                     </thead>
                     <tbody>
                       {orders.map((o) => (
                         <tr key={o.id} className="hover:bg-yellow-50 transition">
                           <td className="p-2 border">{o.id}</td>
-                          <td className="p-2 border">{o.customerName || o.customerEmail}</td>
+                          <td className="p-2 border">{o.receiverName || o.customerEmail}</td>
                           <td className="p-2 border">{o.total?.toLocaleString()}₫</td>
                           <td className="p-2 border">
                             <span className={`px-2 py-1 rounded text-xs font-semibold
-                              ${o.status === "Đã giao" ? "bg-green-200 text-green-700" :
-                                o.status === "Đang xử lý" ? "bg-yellow-200 text-yellow-700" :
-                                "bg-gray-200 text-gray-700"}`}>
-                              {o.status || "Chưa xử lý"}
+                              ${o.status === "completed" ? "bg-green-200 text-green-700" :
+                                o.status === "pending" ? "bg-yellow-200 text-yellow-700" :
+                                  "bg-gray-200 text-gray-700"}`}>
+                              {o.status || "uncompleted"}
                             </span>
                           </td>
-                          <td className="p-2 border">
-                            <button onClick={() => handleDeleteOrder(o.id)} className="text-red-600 hover:underline">Xóa</button>
-                          </td>
+
                         </tr>
                       ))}
                     </tbody>

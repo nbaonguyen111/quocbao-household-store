@@ -67,7 +67,7 @@ export default function Danhmuc() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-8">
-      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
+      <div className="max-w-2xl mx-auto bg-blue-900 rounded-xl shadow-lg p-8">
         <h1 className="text-2xl font-bold text-blue-700 mb-6 flex items-center gap-2">
           <FaList className="text-blue-500" /> Quản lý danh mục sản phẩm
         </h1>

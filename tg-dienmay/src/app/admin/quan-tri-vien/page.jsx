@@ -221,7 +221,7 @@ export default function QTV() {
                         )}
                     </div>
                 </div>
-                <div className="shadow-lg">
+                <div className="shadow-lg ">
                     <table className="min-w-full text-gray-500 rounded">
                         <thead>
                             <tr>

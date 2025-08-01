@@ -73,10 +73,10 @@ const handleAddToCart = async (product) => {
       const productsWithRating = await Promise.all(
         data.map(async (product) => {
           const reviewsSnapshot = await getDocs(
-            query(collection(db, "reviews"), where("productId", "==", product.id))
+            query(collection(db, "products",product.id, "reviews"))
           );
 
-          const ratings = reviewsSnapshot.docs.map(doc => doc.data().rating);
+          const ratings = reviewsSnapshot.docs.map(doc => doc.data().rating) .filter(r => typeof r === "number" && !isNaN(r));
           const avgRating =
             ratings.length > 0
               ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
