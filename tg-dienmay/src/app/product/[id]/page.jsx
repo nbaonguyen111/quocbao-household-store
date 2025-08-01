@@ -53,7 +53,8 @@ export default function ProductDetail() {
       if (!id) return;
       const reviewsCol = collection(db, "products", id, "reviews");
       const snapshot = await getDocs(reviewsCol);
-      setReviews(snapshot.docs.map(doc => doc.data()));
+      // Chỉ lấy đánh giá chưa bị ẩn
+      setReviews(snapshot.docs.map(doc => doc.data()).filter(r => !r.hidden));
     }
     fetchReviews();
   }, [id]);
@@ -96,14 +97,16 @@ export default function ProductDetail() {
         userId: userId || "Khách",
         date: new Date().toLocaleString("vi-VN"),
         rating,
+        hidden: false, // Đánh giá mới luôn hiện
+        reported: false,
       });
       setReview("");
       setRating(0);
       toast.success("Gửi đánh giá thành công!");
-      // Reload lại danh sách đánh giá
+      // Reload lại danh sách đánh giá, chỉ lấy đánh giá chưa bị ẩn
       const reviewsCol = collection(db, "products", id, "reviews");
       const snapshot = await getDocs(reviewsCol);
-      setReviews(snapshot.docs.map(doc => doc.data()));
+      setReviews(snapshot.docs.map(doc => doc.data()).filter(r => !r.hidden));
     } catch (err) {
       toast.error("Lỗi khi gửi đánh giá!");
     }
