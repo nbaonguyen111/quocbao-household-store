@@ -1,4 +1,3 @@
-
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 
@@ -7,16 +6,18 @@ export const addToCart = async (userId, product) => {
     const productRef = doc(db, "carts", userId, "items", product.id);
     const snapshot = await getDoc(productRef);
 
+    const addQty = product.quantity || 1;
+
     if (snapshot.exists()) {
       const currentQty = snapshot.data().quantity || 1;
       await setDoc(productRef, {
         ...product,
-        quantity: currentQty + 1,
+        quantity: currentQty + addQty,
       });
     } else {
       await setDoc(productRef, {
         ...product,
-        quantity: 1,
+        quantity: addQty,
       });
     }
 

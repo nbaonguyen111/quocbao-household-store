@@ -71,6 +71,7 @@ export default function ProductDetail() {
     }
   };
 
+  // Đảm bảo truyền đúng quantity khi thêm vào giỏ hàng
   const handleAddToCart = async () => {
     if (!product || !userId) return;
     await addToCart(userId, { ...product, quantity });
@@ -86,8 +87,6 @@ export default function ProductDetail() {
       toast.error("Vui lòng chọn số sao và nhập nội dung đánh giá!");
       return;
     }
-
-
     try {
       let userName = "Khách";
       if (userId) {
@@ -98,7 +97,7 @@ export default function ProductDetail() {
       }
       await addDoc(collection(db, "products", id, "reviews"), {
         text: review,
-       userName,
+        userName,
         date: new Date().toLocaleString("vi-VN"),
         rating,
         hidden: false,
@@ -318,7 +317,7 @@ export default function ProductDetail() {
                   )}
                 </div>
               ))}
-            </div>
+           </div>
           </div>
         </div>
       </main>
