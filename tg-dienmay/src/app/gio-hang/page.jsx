@@ -85,7 +85,7 @@ export default function Giohang() {
                     <td className="px-4 py-2 border">{index + 1}</td>
                     <td className="px-4 py-2 border">
                       <img
-                        src={`/images/${item.imageUrl}` || "https://via.placeholder.com/50"}
+                        src={`${item.imageUrl}` || "https://via.placeholder.com/50"}
                         alt="Hình ảnh"
                         className="w-12 h-12 object-cover mx-auto"
                       />
