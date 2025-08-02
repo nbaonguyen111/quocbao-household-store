@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///D:/cmder/quocbao-household-store/tg-dienmay/src/app/admin/layout.jsx"],"sourcesContent":["\r\nimport Sidebar from \"../\";\r\nimport \"../globals.css\"; // nếu cần CSS toàn cục\r\n\r\nexport const metadata = {\r\n  title: 'Admin',\r\n};\r\n\r\nexport default function AdminLayout({ children }) {\r\n  return (\r\n    <div className=\"flex\">\r\n      <Sidebar />\r\n      <div className=\"ml-64 p-6 w-full\">{children}</div>\r\n    </div>\r\n  );\r\n}\r\n"],"names":[],"mappings":";;;;;;;;;;;;;AAIO,MAAM,WAAW;IACtB,OAAO;AACT;AAEe,SAAS,YAAY,EAAE,QAAQ,EAAE;IAC9C,qBACE,8OAAC;QAAI,WAAU;;0BACb,8OAAC;;;;;0BACD,8OAAC;gBAAI,WAAU;0BAAoB;;;;;;;;;;;;AAGzC","debugId":null}}]
-}
