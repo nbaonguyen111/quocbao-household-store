@@ -1,18 +1,17 @@
 'use client';
-import React, { useState, useEffect } from "react";
-import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
-import { FaPlus, FaTrash, FaEdit, FaList, FaTags } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { FaPlus, FaTrash, FaEdit, FaList, FaTags, FaImage, FaTimes } from "react-icons/fa";
 
 export default function Danhmuc() {
   const [categories, setCategories] = useState([]);
-  const [name, setName] = useState("");
-  const [editingId, setEditingId] = useState(null);
-  const [editingName, setEditingName] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState({ id: "", name: "", icon: "" });
+  const [editId, setEditId] = useState(null);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // Fetch categories
+  
   const fetchCategories = async () => {
     setLoading(true);
     const snap = await getDocs(collection(db, "categories"));
@@ -20,9 +19,7 @@ export default function Danhmuc() {
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  useEffect(() => { fetchCategories(); }, []);
 
   useEffect(() => {
     if (message) {
@@ -30,51 +27,64 @@ export default function Danhmuc() {
       return () => clearTimeout(t);
     }
   }, [message]);
-  const handleAdd = async (e) => {
+
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
-    await addDoc(collection(db, "categories"), { name: name.trim() });
-    setName("");
-    setMessage("Thêm danh mục thành công!");
-    fetchCategories(); // Refetch để tránh trùng key
+    if (!form.id.trim() || !form.name.trim()) return;
+    try {
+      
+      if (!editId && categories.some(c => c.id === form.id.trim())) {
+        setMessage("ID này đã tồn tại, vui lòng chọn ID khác!");
+        return;
+      }
+      if (editId) {
+        
+        await updateDoc(doc(db, "categories", editId), {
+          name: form.name.trim(),
+          icon: form.icon.trim(),
+        });
+        setMessage("Cập nhật thành công!");
+      } else {
+        
+        await setDoc(doc(db, "categories", form.id.trim()), {
+          name: form.name.trim(),
+          icon: form.icon.trim(),
+        });
+        setMessage("Thêm danh mục thành công!");
+      }
+      setForm({ id: "", name: "", icon: "" });
+      setEditId(null);
+      fetchCategories();
+    } catch (err) {
+      setMessage("Có lỗi xảy ra khi cập nhật/thêm danh mục!");
+      console.error(err);
+    }
   };
+
+  
   const handleDelete = async (id) => {
     if (!confirm("Bạn chắc chắn muốn xóa danh mục này?")) return;
     await deleteDoc(doc(db, "categories", id));
     setMessage("Đã xóa danh mục!");
-    fetchCategories(); // Refetch để tránh trùng key
+    fetchCategories();
   };
 
-  const handleEdit = (id, name) => {
-    setEditingId(id);
-    setEditingName(name);
+  
+  const handleEdit = (cat) => {
+    setEditId(cat.id);
+    setForm({ id: cat.id, name: cat.name, icon: cat.icon || "" });
   };
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    if (!editingName.trim()) return;
-    await updateDoc(doc(db, "categories", editingId), { name: editingName.trim() });
-    setEditingId(null);
-    setEditingName("");
-    setMessage("Cập nhật thành công!");
-    fetchCategories(); // Refetch để tránh trùng key
-  };
-  const badgeColors = [
-    "bg-blue-200 text-blue-700",
-    "bg-green-200 text-green-700",
-    "bg-yellow-200 text-yellow-700",
-    "bg-pink-200 text-pink-700",
-    "bg-purple-200 text-purple-700",
-    "bg-orange-200 text-orange-700",
-  ];
 
-  // Lọc trùng id (chỉ giữ lại 1 document cho mỗi id)
-  const uniqueCategories = Array.from(
-    new Map(categories.map(item => [item.id, item])).values()
-  );
+ 
+  const handleCancel = () => {
+    setEditId(null);
+    setForm({ id: "", name: "", icon: "" });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-8">
-      <div className="max-w-2xl mx-auto bg-blue-900 rounded-xl shadow-lg p-8">
+      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
         <h1 className="text-2xl font-bold text-blue-700 mb-6 flex items-center gap-2">
           <FaList className="text-blue-500" /> Quản lý danh mục sản phẩm
         </h1>
@@ -83,29 +93,44 @@ export default function Danhmuc() {
             {message}
           </div>
         )}
-        <form onSubmit={editingId ? handleUpdate : handleAdd} className="flex gap-2 mb-6">
+        <form onSubmit={handleSubmit} className="flex gap-2 mb-6 flex-wrap">
+          <input
+            type="text"
+            className="border rounded px-3 py-2 flex-1 focus:ring-2 focus:ring-blue-300"
+            placeholder="ID (ví dụ: tv, ac, fridge...)"
+            value={form.id}
+            onChange={e => setForm({ ...form, id: e.target.value })}
+            
+          />
           <input
             type="text"
             className="border rounded px-3 py-2 flex-1 focus:ring-2 focus:ring-blue-300"
             placeholder="Tên danh mục..."
-            value={editingId ? editingName : name}
-            onChange={e => editingId ? setEditingName(e.target.value) : setName(e.target.value)}
+            value={form.name}
+            onChange={e => setForm({ ...form, name: e.target.value })}
+          />
+          <input
+            type="text"
+            className="border rounded px-3 py-2 flex-1 focus:ring-2 focus:ring-blue-300"
+            placeholder="Link ảnh icon (VD: /images/tivi.png)"
+            value={form.icon}
+            onChange={e => setForm({ ...form, icon: e.target.value })}
           />
           <button
             type="submit"
             className={`flex items-center gap-1 px-4 py-2 rounded text-white font-semibold transition
-              ${editingId ? "bg-yellow-500 hover:bg-yellow-600" : "bg-blue-600 hover:bg-blue-700"}`}
+              ${editId ? "bg-yellow-500 hover:bg-yellow-600" : "bg-blue-600 hover:bg-blue-700"}`}
           >
-            {editingId ? <FaEdit /> : <FaPlus />}
-            {editingId ? "Cập nhật" : "Thêm"}
+            {editId ? <FaEdit /> : <FaPlus />}
+            {editId ? "Cập nhật" : "Thêm"}
           </button>
-          {editingId && (
+          {editId && (
             <button
               type="button"
-              className="px-3 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold"
-              onClick={() => { setEditingId(null); setEditingName(""); }}
+              className="px-3 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold flex items-center gap-1"
+              onClick={handleCancel}
             >
-              Hủy
+              <FaTimes /> Hủy
             </button>
           )}
         </form>
@@ -113,22 +138,28 @@ export default function Danhmuc() {
           <table className="min-w-full border text-sm rounded-lg overflow-hidden shadow">
             <thead>
               <tr className="bg-blue-100">
+                <th className="p-2 border text-left">ID</th>
                 <th className="p-2 border text-left">Tên danh mục</th>
+                <th className="p-2 border text-left">Icon</th>
                 <th className="p-2 border w-32 text-center">Thao tác</th>
               </tr>
             </thead>
             <tbody>
-              {uniqueCategories.map((c, idx) => (
+              {categories.map((c) => (
                 <tr key={c.id} className="hover:bg-blue-50 transition">
-                  <td className="p-2 border flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${badgeColors[idx % badgeColors.length]}`}>
-                      <FaTags /> {c.name}
-                    </span>
+                  <td className="p-2 border">{c.id}</td>
+                  <td className="p-2 border">{c.name}</td>
+                  <td className="p-2 border">
+                    {c.icon ? (
+                      <img src={c.icon} alt={c.name} className="w-10 h-10 object-contain rounded shadow border" />
+                    ) : (
+                      <span className="text-gray-400 flex items-center gap-1"><FaImage /> Không có</span>
+                    )}
                   </td>
                   <td className="p-2 border flex gap-2 justify-center">
                     <button
                       className="text-yellow-600 hover:text-yellow-800"
-                      onClick={() => handleEdit(c.id, c.name)}
+                      onClick={() => handleEdit(c)}
                       title="Sửa"
                     >
                       <FaEdit />
@@ -145,7 +176,7 @@ export default function Danhmuc() {
               ))}
               {categories.length === 0 && (
                 <tr>
-                  <td colSpan={2} className="text-center text-gray-500 py-4">Chưa có danh mục nào.</td>
+                  <td colSpan={4} className="text-center text-gray-500 py-4">Chưa có danh mục nào.</td>
                 </tr>
               )}
             </tbody>

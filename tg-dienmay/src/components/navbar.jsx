@@ -3,23 +3,16 @@ import { useState, useEffect } from "react";
 import 'flowbite';
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "@/firebase/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-
-const categories = [
-  { id: 'ac', name: 'Máy Lạnh', icon: '/images/maylanh.png' },
-  { id: 'tv', name: 'Tivi', icon: '/images/tivi.png' },
-  { id: 'fridge', name: 'Tủ Lạnh', icon: '/images/tulanh.png' },
-  { id: 'washer', name: 'Máy Giặt', icon: '/images/maygiat.png' },
-  { id: 'microwave', name: 'Lò Vi Sóng', icon: '/images/lovisong.png' }
-];
 
 export default function Navbar() {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
   const router = useRouter();
   const handleLogout = async () => {
     setLoading(true);
@@ -59,7 +52,23 @@ export default function Navbar() {
   const [showDropdownAc, setShowDropdownAc] = useState(false);
   const [search, setSearch] = useState("");
 
-  useEffect(() => { }, []);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const snap = await getDocs(collection(db, "categories"));
+      // Lọc trùng theo tên
+      const uniqueCategories = [];
+      const seenNames = new Set();
+      snap.docs.forEach(doc => {
+        const data = { id: doc.id, ...doc.data() };
+        if (!seenNames.has(data.name)) {
+          uniqueCategories.push(data);
+          seenNames.add(data.name);
+        }
+      });
+      setCategories(uniqueCategories);
+    };
+    fetchCategories();
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -106,7 +115,11 @@ export default function Navbar() {
                         className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 transition text-gray-800 hover:text-blue-700 font-medium"
                         onClick={() => setShowDropdown(false)}
                       >
-                        <img src={cat.icon} alt={cat.name} className="w-8 h-8 object-contain" />
+                        <img
+                          src={cat.icon || ""}
+                          alt={cat.name}
+                          className="w-8 h-8 object-contain"
+                        />
                         <span>{cat.name}</span>
                       </a>
                     </li>

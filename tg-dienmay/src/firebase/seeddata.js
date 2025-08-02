@@ -4,7 +4,9 @@ import {
   collection,
   addDoc,
   getDocs,
-  serverTimestamp
+  serverTimestamp,
+  setDoc,
+  doc
 } from "firebase/firestore";
 
 // ----------- Danh mục (Categories) -----------
@@ -15,6 +17,17 @@ const categories = [
   { id: "washer", name: "Máy Giặt" },   
   { id: "microwave", name: "Lò Vi Sóng" }
 ];
+
+const seedCategories = async () => {
+  for (const cat of categories) {
+    await setDoc(doc(db, "categories", cat.id), {
+      name: cat.name,
+      icon: cat.icon || "",
+      createdAt: serverTimestamp()
+    });
+  }
+  console.log("✅ Đã seed categories với id tự đặt!");
+};
 
 // ----------- Sản phẩm (Products) -----------
 const products = [
@@ -142,7 +155,7 @@ const seedCollection = async (name, items) => {
 
 export const seedAll = async () => {
   console.log("🚀 Bắt đầu seed dữ liệu tĩnh...");
-  await seedCollection("categories", categories);
+  await seedCategories();
   await seedCollection("products", products);
   await seedCollection("users", users.map(u => ({ ...u, role: "user" })));
   await seedCollection("adminUsers", adminUsers);
