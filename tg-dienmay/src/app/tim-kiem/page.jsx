@@ -76,7 +76,9 @@ export default function TimKiemPage() {
     fetchProducts();
   }, []);
 
-  const uniqueBrands = Array.from(new Set(products.map((p) => p.brand)));
+  const uniqueBrands = Array.from(
+    new Set(products.map((p) => p.brand).filter(Boolean))
+  );
   useEffect(() => {
     let filtered = products;
     if (searchTerm.trim()) {
@@ -127,11 +129,11 @@ export default function TimKiemPage() {
 
 
   const categories = [
-    { label: "Máy Lạnh", href: "/danh-muc/may-lanh", icon: "/images/maylanh.png" },
-    { label: "Tivi", href: "/danh-muc/tivi", icon: "/images/tivi.png" },
-    { label: "Tủ Lạnh", href: "/danh-muc/tu-lanh", icon: "/images/tulanh.png" },
-    { label: "Máy Giặt", href: "/danh-muc/may-giat", icon: "/images/maygiat.png" },
-    { label: "Lò Vi Sóng", href: "/danh-muc/lo-vi-song", icon: "/images/lovisong.png" },
+    { label: "Máy Lạnh", href: "/danh-muc/ac", icon: "/images/maylanh.png" },
+    { label: "Tivi", href: "/danh-muc/tv", icon: "/images/tivi.png" },
+    { label: "Tủ Lạnh", href: "/danh-muc/fridge", icon: "/images/tulanh.png" },
+    { label: "Máy Giặt", href: "/danh-muc/washer", icon: "/images/maygiat.png" },
+    { label: "Lò Vi Sóng", href: "/danh-muc/microwave", icon: "/images/lovisong.png" },
   ];
 
   const [showMenu, setShowMenu] = useState(false);
@@ -317,8 +319,8 @@ export default function TimKiemPage() {
               }}
             >
               <option value="all">Tất cả thương hiệu</option>
-              {uniqueBrands.map((brand) => (
-                <option key={brand} value={brand}>
+              {uniqueBrands.map((brand, idx) => (
+                <option key={brand || idx} value={brand}>
                   {brand}
                 </option>
               ))}
