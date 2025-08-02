@@ -380,7 +380,6 @@ export default function TimKiemPage() {
                   key={p.id || idx}
                   href={`/product/${p.id}`}
                   style={{ textDecoration: "none" }}
-                  onClick={() => console.log("Đi tới sản phẩm id:", p.id)}
                 >
                   <div
                     style={{
@@ -491,15 +490,9 @@ export default function TimKiemPage() {
                     </h3>
                     <div style={{ color: "#555", fontSize: 15, marginBottom: 4 }}>
                       Danh mục:{" "}
-                      <Link
-                        key={p.id || idx}
-                        href={`/danh-muc/${encodeURIComponent(p.category)}`}
-                        style={{ textDecoration: "none" }}
-                        onClick={() => console.log("Đi tới danh mục:", p.category)}
-                      >
-                        <div>
-                        </div>
-                      </Link>
+                      <span style={{ color: "#1976d2", fontWeight: 600 }}>
+                        {p.category}
+                      </span>
                     </div>
                     <div style={{ color: "#555", fontSize: 15, marginBottom: 4 }}>
                       Thương hiệu: <b>{p.brand}</b>
