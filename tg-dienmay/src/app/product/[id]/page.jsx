@@ -127,7 +127,7 @@ export default function ProductDetail() {
             <div>
               <div className="border-2 border-blue-400 rounded-lg flex items-center justify-center w-80 h-80 mb-4 bg-white shadow">
                 <img
-                  src={`/images/${product.imageUrl}`}
+                  src={`${product.imageUrl}`}
                   alt={product.name}
                   className="max-w-full max-h-full object-contain"
                 />
