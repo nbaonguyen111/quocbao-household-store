@@ -13,6 +13,7 @@ export default function Navbar() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [settings, setSettings] = useState({});
   const router = useRouter();
   const handleLogout = async () => {
     setLoading(true);
@@ -20,6 +21,16 @@ export default function Navbar() {
     setLoading(false);
     router.push("/");
   };
+
+  
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const ref = doc(db, "settings", "main");
+      const snap = await getDoc(ref);
+      if (snap.exists()) setSettings(snap.data());
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -55,7 +66,7 @@ export default function Navbar() {
   useEffect(() => {
     const fetchCategories = async () => {
       const snap = await getDocs(collection(db, "categories"));
-      // Lọc trùng theo tên
+      
       const uniqueCategories = [];
       const seenNames = new Set();
       snap.docs.forEach(doc => {
@@ -81,7 +92,7 @@ export default function Navbar() {
     <div>
 
       <img
-        src="/images/banner1.png"
+        src={settings.banner || "/images/banner1.png"}
         alt="Banner"
         className="w-full max-h-72 object-contain mx-auto"
       />
@@ -89,8 +100,16 @@ export default function Navbar() {
       <nav className="bg-[#2196f3] w-full">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-2 relative">
           <Link href="/" className="flex items-center space-x-2">
-            <img src="/images/logo1.png" alt="Logo" className="h-32 w-32" />
+            <img
+              src={settings.logo || "/images/logo1.png"}
+              alt="Logo"
+              className="h-32 w-32"
+            />
+            <span className="text-white text-xl font-bold hidden md:block">
+              {settings.websiteName || ""}
+            </span>
           </Link>
+          
           <div className="relative">
             <button
               className="flex items-center text-white font-semibold px-3 py-2 rounded hover:bg-blue-800 transition"

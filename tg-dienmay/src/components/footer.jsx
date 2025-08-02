@@ -1,9 +1,20 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase/firebase";
 import 'flowbite';
 
 export default function Footer() {
-    useEffect(() => { }, []);
+    const [settings, setSettings] = useState({});
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            const ref = doc(db, "settings", "main");
+            const snap = await getDoc(ref);
+            if (snap.exists()) setSettings(snap.data());
+        };
+        fetchSettings();
+    }, []);
 
     return (
         <footer className="bg-white rounded-lg shadow-sm mt-4 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
@@ -11,13 +22,24 @@ export default function Footer() {
                 <div>
                     <div className="font-bold mb-2 text-blue-700">Tổng đài hỗ trợ</div>
                     <div>
-                        Gọi mua: <a href="tel:1900232461" className="text-blue-600 font-semibold hover:underline">1900 999 999</a> (8:00 - 21:30)
+                        Gọi mua: <a href={`tel:${settings.hotline || "1900232461"}`} className="text-blue-600 font-semibold hover:underline">
+                            {settings.hotline || "1900 999 999"}
+                        </a> (8:00 - 21:30)
                     </div>
                     <div>
-                        Khiếu nại: <a href="tel:18001063" className="text-blue-600 font-semibold hover:underline">1800.9999</a> (8:00 - 21:30)
+                        Khiếu nại: <a href={`tel:${settings.hotline || "1900232461"}`} className="text-blue-600 font-semibold hover:underline">
+                            {settings.hotline || "1900 999 999"}
+                        </a> (8:00 - 21:30)
                     </div>
                     <div>
-                        Bảo hành: <a href="tel:1900232465" className="text-blue-600 font-semibold hover:underline">1900 999 999</a> (8:00 - 21:00)
+                        Bảo hành: <a href={`tel:${settings.hotline || "1900232465"}`} className="text-blue-600 font-semibold hover:underline">
+                            {settings.hotline || "1900 999 999"}
+                        </a> (8:00 - 21:00)
+                    </div>
+                    <div>
+                        Địa Chỉ: <a href={`tel:${settings.address || "1900232465"}`} className="text-blue-600 font-semibold hover:underline">
+                            {settings.address || ("123 Đường ABC, Quận 1, TP. Hồ Chí Minh")}
+                        </a>
                     </div>
                     <div className="mt-3">
                         <a href="/lien-he" className="text-blue-600 hover:underline">Liên hệ & Hỗ trợ</a>
@@ -72,7 +94,12 @@ export default function Footer() {
                 </div>
             </div>
             <div className="w-full mx-auto max-w-screen-xl px-6 pb-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 dark:text-gray-400">
-                <div className="mb-2 md:mb-0">© {new Date().getFullYear()} <a href="/" className="font-semibold text-blue-700">Điện Máy Store</a>. All rights reserved.</div>
+                <div className="mb-2 md:mb-0">© {new Date().getFullYear()} <a href="/" className="font-semibold text-blue-700">Điện Máy Store</a>. All rights reserved.
+                {settings.hotline && (
+              <span>
+                Copyright: <a href={`tel:${settings.Copyright}`} className="underline">{settings.Copyright}</a>
+              </span>
+            )}</div>
                 <div className="flex gap-4">
                     <a href="/chinh-sach" className="hover:underline">Chính sách bảo mật</a>
                     <a href="/dieu-khoan" className="hover:underline">Điều khoản sử dụng</a>

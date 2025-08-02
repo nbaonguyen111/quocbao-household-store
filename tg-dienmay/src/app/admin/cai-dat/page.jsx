@@ -7,44 +7,46 @@ import { FaCog, FaImage, FaPhoneAlt, FaMapMarkerAlt, FaGlobe, FaEnvelope, FaUndo
 export default function Caidat() {
   const [settings, setSettings] = useState({
     logo: "",
+    favicon: "",
     hotline: "",
     address: "",
     websiteName: "",
-    description: "",
     email: "",
   });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
-  // Lấy dữ liệu setting từ Firestore
+ 
+  const fetchSettings = async () => {
+    setLoading(true);
+    const ref = doc(db, "settings", "main");
+    const snap = await getDoc(ref);
+    if (snap.exists()) setSettings(snap.data());
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchSettings = async () => {
-      setLoading(true);
-      const ref = doc(db, "settings", "main");
-      const snap = await getDoc(ref);
-      if (snap.exists()) setSettings({ ...settings, ...snap.data() });
-      setLoading(false);
-    };
     fetchSettings();
-    // eslint-disable-next-line
+    
   }, []);
 
-  // Lưu setting
+  
   const handleSave = async (e) => {
     e.preventDefault();
     await setDoc(doc(db, "settings", "main"), settings);
     setMessage("✅ Đã lưu cài đặt!");
+    await fetchSettings(); 
     setTimeout(() => setMessage(""), 2500);
   };
 
-  // Reset về mặc định
+  
   const handleReset = () => {
     setSettings({
       logo: "",
+      favicon: "",
       hotline: "",
       address: "",
       websiteName: "",
-      description: "",
       email: "",
     });
     setMessage("Đã reset về mặc định!");
@@ -133,14 +135,22 @@ export default function Caidat() {
               )}
             </div>
             <div>
-              <label className="block font-semibold mb-1">Mô tả website</label>
-              <textarea
+              <label className="block font-semibold mb-1 flex items-center gap-2">
+                <FaImage /> Favicon (URL)
+              </label>
+              <input
+                type="text"
                 className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-300"
-                value={settings.description}
-                onChange={e => setSettings({ ...settings, description: e.target.value })}
-                placeholder="Giới thiệu ngắn về website..."
-                rows={3}
+                value={settings.favicon}
+                onChange={e => setSettings({ ...settings, favicon: e.target.value })}
+                placeholder="Dán link favicon..."
               />
+              {settings.favicon && (
+                <div className="flex flex-col items-center mt-2">
+                  <img src={settings.favicon} alt="Favicon" className="h-10 w-10 rounded shadow border" />
+                  <span className="text-xs text-gray-500 mt-1">Xem trước favicon</span>
+                </div>
+              )}
             </div>
             <div className="flex gap-3 mt-6">
               <button
