@@ -222,10 +222,19 @@ export default function TrangChu() {
                   <div className="text-red-600 text-lg font-bold mb-1">
                     {sp.price?.toLocaleString()}₫
                   </div>
-                  <div className="flex items-center text-yellow-500 text-sm">
-                    <button onClick={() => handleAddToCart(sp)} className="bg-blue-500 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded">Thêm vào giỏ hàng</button>
-                  </div>
 
+                  <div className="flex items-center text-yellow-500 text-sm">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleAddToCart(sp);
+                      }}
+                      className="bg-blue-500 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Thêm vào giỏ hàng
+                    </button>
+                  </div>
                 </Link>
               ))
             )}
