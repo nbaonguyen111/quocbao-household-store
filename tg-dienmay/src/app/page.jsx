@@ -124,40 +124,40 @@ const handleAddToCart = async (product) => {
       </section>
 
       <section className="danh-muc bg-gray-500 py-4 rounded-lg shadow mb-6">
-        <div className="flex justify-around items-end text-yellow-500 font-bold">
-          {/* Máy lạnh */}
-          <button className="flex flex-col items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition cursor-pointer border border-transparent hover:border-blue-400 focus:outline-none">
-            <div className="relative">
-              <img src="/images/maylanh.png" alt="Máy lạnh" className="h-12 w-auto mb-1" />
-              <span className="absolute top-0 right-0 bg-red-200 text-red-600 text-xs font-bold px-2 rounded">HOT</span>
-            </div>
-            <span className="mt-1 text-sm font-medium">Máy lạnh</span>
-          </button>
-          {/* Quạt điều hòa */}
-          <button className="flex flex-col items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition cursor-pointer border border-transparent hover:border-blue-400 focus:outline-none">
-            <div className="relative">
-              <img src="/images/maygiat.png" alt="Quạt điều hòa" className="h-12 w-auto mb-1" />
-              <span className="absolute top-0 right-0 bg-red-200 text-red-600 text-xs font-bold px-2 rounded">HOT</span>
-            </div>
-            <span className="mt-1 text-sm font-medium">Máy giặt</span>
-          </button>
-          {/* Máy giặt */}
-          <button className="flex flex-col items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition cursor-pointer border border-transparent hover:border-blue-400 focus:outline-none">
-            <img src="/images/tulanh.png" alt="Máy giặt" className="h-12 w-auto mb-2" />
-            <span className="mt-1 text-sm font-medium">Tủ lạnh</span>
-          </button>
-          {/* Máy lọc nước */}
-          <button className="flex flex-col items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition cursor-pointer border border-transparent hover:border-blue-400 focus:outline-none">
-            <img src="/images/mayquat.png" alt="Máy lọc nước" className="h-12 w-auto mb-2" />
-            <span className="mt-1 text-sm font-medium">Máy quạt</span>
-          </button>
-          {/* Tủ đông mát */}
-          <button className="flex flex-col items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition cursor-pointer border border-transparent hover:border-blue-400 focus:outline-none">
-            <img src="/images/tivi.png" alt="Tủ đông mát" className="h-12 w-auto mb-2" />
-            <span className="mt-1 text-sm font-medium">Tivi</span>
-          </button>
-        </div>
-      </section>
+  <div className="flex justify-around items-end text-yellow-500 font-bold">
+    {/* Máy lạnh */}
+    <Link href="/danh-muc/ac" className="flex flex-col items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition cursor-pointer border border-transparent hover:border-blue-400 focus:outline-none">
+      <div className="relative">
+        <img src="/images/maylanh.png" alt="Máy lạnh" className="h-12 w-auto mb-1" />
+        <span className="absolute top-0 right-0 bg-red-200 text-red-600 text-xs font-bold px-2 rounded">HOT</span>
+      </div>
+      <span className="mt-1 text-sm font-medium">Máy lạnh</span>
+    </Link>
+    {/* Máy giặt */}
+    <Link href="/danh-muc/washer" className="flex flex-col items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition cursor-pointer border border-transparent hover:border-blue-400 focus:outline-none">
+      <div className="relative">
+        <img src="/images/maygiat.png" alt="Máy giặt" className="h-12 w-auto mb-1" />
+        <span className="absolute top-0 right-0 bg-red-200 text-red-600 text-xs font-bold px-2 rounded">HOT</span>
+      </div>
+      <span className="mt-1 text-sm font-medium">Máy giặt</span>
+    </Link>
+    {/* Tủ lạnh */}
+    <Link href="/danh-muc/fridge" className="flex flex-col items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition cursor-pointer border border-transparent hover:border-blue-400 focus:outline-none">
+      <img src="/images/tulanh.png" alt="Tủ lạnh" className="h-12 w-auto mb-2" />
+      <span className="mt-1 text-sm font-medium">Tủ lạnh</span>
+    </Link>
+    {/* Máy quạt */}
+    <Link href="/danh-muc/microwave" className="flex flex-col items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition cursor-pointer border border-transparent hover:border-blue-400 focus:outline-none">
+      <img src="/images/lovisong.png" alt="Máy quạt" className="h-12 w-auto mb-2" />
+      <span className="mt-1 text-sm font-medium">Lò vi sóng</span>
+    </Link>
+    {/* Tivi */}
+    <Link href="/danh-muc/tv" className="flex flex-col items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition cursor-pointer border border-transparent hover:border-blue-400 focus:outline-none">
+      <img src="/images/tivi.png" alt="Tivi" className="h-12 w-auto mb-2" />
+      <span className="mt-1 text-sm font-medium">Tivi</span>
+    </Link>
+  </div>
+</section>
 
       <section className="san-pham-noi-bat">
         <h2 className="text-2xl text-yellow-500 font-bold mb-4 text-center">Sản phẩm nổi bật</h2>
