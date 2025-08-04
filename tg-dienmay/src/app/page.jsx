@@ -167,7 +167,7 @@ export default function TrangChu() {
             ) : (
               featuredProducts.map((sp) => (
                 <Link href={`product/${sp.id}`} key={sp.id} className="bg-white text-yellow-500 rounded-lg shadow p-3 w-60 flex flex-col items-center">
-                  <img src={`images/${sp.imageUrl}`} alt={sp.name} className="w-full h-28 object-contain mb-2" />
+                  <img src={`${sp.imageUrl}`} alt={sp.name} className="w-full h-28 object-contain mb-2" />
                   <div className="font-semibold mb-1">{sp.name}</div>
                   <div className="text-red-600 text-lg font-bold mb-1">
                     {sp.price?.toLocaleString()}₫
@@ -213,7 +213,7 @@ export default function TrangChu() {
                 <Link href={`product/${sp.id}`} key={sp.id} className="bg-white text-yellow-500 rounded-lg shadow p-3 w-60 flex flex-col items-center" >
 
                   <img
-                    src={sp.imageUrl.startsWith("http") ? sp.imageUrl : `/images/${sp.imageUrl}`}
+                    src={sp.imageUrl.startsWith("http") ? sp.imageUrl : `${sp.imageUrl}`}
                     alt={sp.name}
                     className="w-full h-28 object-contain mb-2"
                   />
